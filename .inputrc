@@ -1,0 +1,56 @@
+# Configuere bell. options: none, visible, audible
+#set bell-style none
+
+# Enable 8 bit input
+set meta-flag On
+set input-meta On
+set convert-meta Off
+set output-meta On
+
+# Set various nice escape sequences
+"\eOd": backward-word
+"\eOc": forward-word
+
+# key mapping for linux
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\e[5~": beginning-of-history
+"\e[6~": end-of-history
+"\e[3~": delete-char
+"\e[2~": quoted-insert
+
+#ctrl to move around by word
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+"\e[5C": forward-word
+"\e[5D": backward-word
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+# ctrl backspace to delete a word
+"\C-H": "\C-W"
+"\e[3;5~": shell-kill-word
+
+
+#color tab completions
+set colored-stats on
+
+#show char for vi mode -- doesnt work with PS1
+set editing-mode vi
+set keymap vi-command
+set show-mode-in-prompt on
+
+#use ctrl-l in insert mode
+$if mode=vi
+
+    # these are for vi-command mode
+    Control-l: clear-screen
+
+    set keymap vi-insert
+    # these are for vi-insert mode
+    Control-l: "clear\r"
+$endif
+
+# some ports from vimrc for vi mode
+"jj": "\e"
+
+set bell-style none
