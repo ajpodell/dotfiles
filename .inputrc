@@ -7,28 +7,29 @@ set input-meta On
 set convert-meta Off
 set output-meta On
 
-# Set various nice escape sequences
-"\eOd": backward-word
-"\eOc": forward-word
-
-# key mapping for linux
-"\e[1~": beginning-of-line
-"\e[4~": end-of-line
-"\e[5~": beginning-of-history
-"\e[6~": end-of-history
-"\e[3~": delete-char
-"\e[2~": quoted-insert
-
-#ctrl to move around by word
-"\e[1;5C": forward-word
-"\e[1;5D": backward-word
-"\e[5C": forward-word
-"\e[5D": backward-word
-"\e\e[C": forward-word
-"\e\e[D": backward-word
-# ctrl backspace to delete a word
-"\C-H": "\C-W"
-"\e[3;5~": shell-kill-word
+# TODO: had to comment this for mac
+## Set various nice escape sequences
+#"\eOd": backward-word
+#"\eOc": forward-word
+#
+## key mapping for linux
+#"\e[1~": beginning-of-line
+#"\e[4~": end-of-line
+#"\e[5~": beginning-of-history
+#"\e[6~": end-of-history
+#"\e[3~": delete-char
+#"\e[2~": quoted-insert
+#
+##ctrl to move around by word
+#"\e[1;5C": forward-word
+#"\e[1;5D": backward-word
+#"\e[5C": forward-word
+#"\e[5D": backward-word
+#"\e\e[C": forward-word
+#"\e\e[D": backward-word
+## ctrl backspace to delete a word
+#"\C-H": "\C-W"
+#"\e[3;5~": shell-kill-word
 
 
 #color tab completions
@@ -39,13 +40,20 @@ set editing-mode vi
 set keymap vi-command
 set show-mode-in-prompt on
 
+# change cursor to solid or line in ins or cmd mode in vi
+#set vi-ins-mode-string \1\e[5 q\2+
+#set vi-cmd-mode-string \1\e[2 q\2:
+
 #use ctrl-l in insert mode
 $if mode=vi
-
+    set keymap vi-command
+    "gg": beginning-of-history
+    "G": end-of-history
     # these are for vi-command mode
-    Control-l: clear-screen
-
+    #Control-l: clear-screen
+    "C-l": clear-screen
     set keymap vi-insert
+    "jj": vi-movement-mode
     # these are for vi-insert mode
     Control-l: "clear\r"
 $endif

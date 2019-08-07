@@ -3,14 +3,14 @@
 " :PluginClean after deleting
 set nocompatible
 filetype off
-set rtp+=~/.vim/bundle/vundle
-call vundle#rc()
+"set rtp+=~/.vim/bundle/vundle
+"call vundle#rc()
 "
-Plugin 'Raimondi/delimitMate'
-Plugin 'ericcurtin/CurtineIncSw.vim'
-Plugin 'craigemery/vim-autotag'
-"Plugin 'Valloric/YouCompleteMe'
-"Plugin 'scrooloose/syntastic'
+"Plugin 'Raimondi/delimitMate'
+"Plugin 'ericcurtin/CurtineIncSw.vim'
+"Plugin 'craigemery/vim-autotag'
+""Plugin 'Valloric/YouCompleteMe'
+""Plugin 'scrooloose/syntastic'
 
 "end vundle
 
@@ -33,7 +33,7 @@ noremap K <nop>
 noremap C-[ <nop>
 noremap C-] <nop>
 "cnoremap sh bash  "sh !sh bash
-"set mouse=a
+set mouse=a
 
 function! ToggleMouse()
     " check if mouse is enabled
@@ -283,9 +283,10 @@ filetype plugin on
 set modeline
 set modelines=5
 
+"TODO: get this back
 " DelimitMate
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
+"let delimitMate_expand_cr = 1
+"let delimitMate_expand_space = 1
 
 " little tool for getting the largest bo field for aimom
 function! GetLargestId(name)

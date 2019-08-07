@@ -4,12 +4,30 @@
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+# TODO: split up mac and linux portions
+
+# NOTE: always clone the dotfiles repo into $HOME/dotfiles
+alias brc="vim ~/dotfiles/.bashrc"
+
+# some env variables
+export EDITOR="vim"
+
 #some basics
 alias rless="less -r"
 alias vim="vim -p"
 alias vi="vim -p"
+alias ".."="cd .."
 
-# git & other laziness
+#vim in bash for mac
+set -o vi
+#bindkey -v
+#bindkey -M viins md-mode
+
+
+# laziness + git laziness
+alias c="cd"
+alias l="ls"
+
 alias g="git"
 alias gs="git status"
 alias ga="git add"
@@ -19,6 +37,7 @@ alias gca="git commit -am "
 alias gpoh="git push origin HEAD"
 alias gpfoh="git push --force origin HEAD"
 alias gpum="git pull upstream master"
+
 alias mcb="make clean && make build"
 alias delobj="find . -type f -name '*.[d,o]' -delete;"
 
@@ -34,36 +53,40 @@ _git_changed_files() {
     COMPREPLY=( "${tmp[@]// /\ }" )
 }
 
-complete -d -o default -F _git_changed_files big
+#complete -d -o default -F _git_changed_files big
 
+# fix weird wrappings
 alias fix_wrap="kill -WINCH $$"
 fix_wrap
 
-# change dark blue to lighter blue in ls
-#export LS_COLORS='di='${COLOR_CYAN_di}
-export LS_COLORS='di='${COLOR_CYAN2}
-alias ls="ls --color=auto"
+# change colors for ls
+#export LS_COLORS='di='${COLOR_CYAN_di} #  for linux
+export LSCOLORS=gxfxcxdxCxegedabagacad  # fg/bg - dir sym socket pipe ex block char ex ex dir dir
+#alias ls="ls --color=auto"  # this breaks on mac for some reason
 
-set -o vi # vim in bash
+
+
+
+#python stuff
 #make python interpreter work again. tied to .pythonrc
-export PYTHONSTARTUP=$HOME/.pythonrc
+#export PYTHONSTARTUP=$HOME/.pythonrc
+#dont write .pyc files
+#export PYTHONDONTWRITEBYTECODE=1
 
 #history control
 export HISTCONTROL=ignoredups
 shopt -s histverify
 
 shopt -s cdspell # let me spell poorly
-shopt -s globstar # for use with jd function
+#shopt -s globstar # for use with jd function # this doesnt work on mac/iterm
 
 
-#dont write .pyc files
-export PYTHONDONTWRITEBYTECODE=1
 
-# colorize output unless piping to a file
-export GREP_OPTIONS='--color=auto --exclude=\*.o --exclude=\*.depends --exclude=\*.d --include=\*.fsm --include=\*.f
- --include=\*.c --include=\*.cpp --include=\*.py --include=\*.h --include=\*q --include=\*tmpl --include=\*yaml -nr'
-#export GREP_OPTIONS='--color=auto --exclude=\*\.o --exclude-dir=\.git --exclude=tags -nr'
-alias sgrep="GREP_OPTIONS= grep"
+# colorize output unless piping to a file. dont look at object binaries
+# THIS MAGICALLY BREAKS THINGS ON MAC! DON'T UNCOMMENT UNTIL FURTHER RESEARCH
+#export GREP_OPTIONS='--color=auto --exclude=\*.o --exclude=\*.depends --exclude=\*.d --include=\*.fsm --include=\*.f --include=\*.c --include=\*.cpp --include=\*.py --include=\*.h --include=\*q --include=\*tmpl --include=\*yaml -nr'
+#export GREP_OPTIONS='--color=auto --exclude=\*\.o --exclude-dir=\.git --exclude=tags -nr' # not this one
+#alias sgrep="GREP_OPTIONS= grep"
 
 ######################
 ######## GIT #########
@@ -148,54 +171,80 @@ watch_make() {
 
 
 
-# BASH PROMPT
-source ~/.git-completion.sh
 # last 3 dirs of pwd
-pwdtail() {
-    pwd | awk -F/ '{print "../"$(NF-2)"/"$(NF-1)"/"$NF}' | sed 's/ /\//g' | sed 's/.*home\//\/home\//' | sed 's/.*\/  ts\//\/ts\//' | sed 's/.*bb\//\/bb\//'
-}
+#pwdtail() {
+#    pwd | awk -F/ '{print "../"$(NF-2)"/"$(NF-1)"/"$NF}' | sed 's/ /\//g' | sed 's/.*home\//\/home\//' | sed 's/.*\/  ts\//\/ts\//' | sed 's/.*bb\//\/bb\//'
+#}
 
 
 # i think this was testing setting the title bar, but i broke it
-case $TERM in
-    xterm*)
-        PS1="\[\033]0;\u@\h: \w\$(__git_ps1)\007\]bash\\$ "
-        ;;
-    *)
-        #PS1=${COLOR_GREEN}'\u@\h '${COLOR_RED}'$(__git_ps1 "(%s)")'${COLOR_YELLOW}'\a'${COLOR_RESET}"\n\$ ";
-        #;;
-esac
+#case $TERM in
+#    xterm*)
+#        PS1="\[\033]0;\u@\h: \w\$(__git_ps1)\007\]bash\\$ "
+#        ;;
+#    *)
+#        #PS1=${COLOR_GREEN}'\u@\h '${COLOR_RED}'$(__git_ps1 "(%s)")'${COLOR_YELLOW}'\a'${COLOR_RESET}"\n\$ ";
+#        #;;
+#esac
+
+export CLICOLOR=1 #ansi colors in iterm2
 
 COLOR_RED='\[\e[31m\]'
 COLOR_RED2='\e[31m'
+COLOR_RED_MAC='\033[0;31m'
 COLOR_GREEN='\[\e[0;32m\]'
 COLOR_GREEN2='\e[0;32m'
+COLOR_GREEN_MAC='\033[0;32m'
 COLOR_YELLOW='\[\e[0;33m\]'
 COLOR_YELLOW2='\e[0;33m'
+COLOR_YELLOW_MAC='\033[0;33m'
 COLOR_BLUE='\[\e[1;34m\]'
+COLOR_BLUE_MAC='\033[1;34m'
 COLOR_PURPLE='\[\e[0;35m\]'
 COLOR_CYAN='\[\e[0;36m\]'
 COLOR_CYAN_di='\[\e[0;36'
+COLOR_CYAN_MAC='\[\e[36;0m\]'
+COLOR_CYAN_MAC_di='\e[0;36m'
 COLOR_CYAN2='0;36'
 COLOR_RESET='\[\e[0m\]'
 COLOR_RESET2='\e[0m'
+COLOR_RESET_MAC='\033[0;00m'
+
+# old script for getting git completion
+#source ~/.git-completion.sh
 
 # this requires the git-completion.sh script
+function parse_git_branch {
+    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+ # Determine active Python virtualenv details.
+function set_virtualenv () {
+    if test -z "$VIRTUAL_ENV" ; then
+        PYTHON_VIRTUALENV=""
+    else
+        PYTHON_VIRTUALENV="${COLOR_BLUE_MAC}(`basename \"$VIRTUAL_ENV\"`)${COLOR_RESET_MAC}"
+    fi
+}
+
 function prompt {
+    # set python_virtualenv
+    set_virtualenv 
+
     PS1='$ '
-    echo -e ${COLOR_GREEN2}${USER}'@'${HOSTNAME}${COLOR_RED2}`__git_ps1`${COLOR_YELLOW2}' '`pwdtail`'\a'${COLOR_RESE
-T2}
+    echo -e "${PYTHON_VIRTUALENV} ${COLOR_GREEN_MAC}${USER}@${HOSTNAME}${COLOR_RED_MAC}$(parse_git_branch) ${COLOR_YELLOW_MAC}${PWD}\a${COLOR_RESET_MAC}"
+    #echo -e ${COLOR_GREEN2}${USER}'@'${HOSTNAME}${COLOR_RED2}`__git_ps1`${COLOR_YELLOW2}' '`pwdtail`'\a'${COLOR_RESET2}
 }
 PROMPT_COMMAND='prompt'
 
 
 # DISABLE BELL
-set bell-style none
-#xset -b
+#set bell-style none 
+#xset -b # this one doesnt really work. not sure where its from
 
 
 # RUN TMUX AT STARTUP
 if [[ ! $TERM =~ screen-256color ]]; then
-    tmux attach || tmux
+    tmux # attach || tmux
 fi
 
