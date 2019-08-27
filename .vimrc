@@ -1,18 +1,5 @@
 " init vundle
-" :PluginInstall after adding a new
-" :PluginClean after deleting
-set nocompatible
-filetype off
-"set rtp+=~/.vim/bundle/vundle
-"call vundle#rc()
-"
-"Plugin 'Raimondi/delimitMate'
-"Plugin 'ericcurtin/CurtineIncSw.vim'
-"Plugin 'craigemery/vim-autotag'
-""Plugin 'Valloric/YouCompleteMe'
-""Plugin 'scrooloose/syntastic'
-
-"end vundle
+source $HOME/dotfiles/.vim_plugins
 
 " Some starter commands
 set nu
@@ -23,7 +10,7 @@ inoremap jJ <ESC>   " let me mess this up sometimes
 inoremap :w <ESC>:w
 noremap Y y$
 nnoremap \ ^
-set pastetoggle=<Leader>v
+"set pastetoggle=<Leader>v " this doesnt really work right
 "set path+=src,codegen,generated
 nnoremap <Leader>w :%s/\s\+$//e<cr>  " clean trailing whitespace for the file
 
@@ -90,7 +77,7 @@ set laststatus=2
 set cf
 
 "set isk+=_,$,@,%,#, " these are not word separators
-set lz " do not redraw during macors
+set lz " do not redraw during macros
 set diffopt+=iwhite
 set wildmenu "allow tabbing to autocomplete
 set wildmode=list:longest
@@ -111,7 +98,7 @@ colorscheme desert
 "set to whatever you like
 augroup vimrc_autocmds
     au BufEnter * highlight ColorColumn ctermbg=darkred
-    au BufEnter * call matchadd('ColorColumn', '\%81v.', 100) "set column nr
+    au BufEnter * call matchadd('ColorColumn', '\%111v.', 100) "set column nr
 augroup END
 
 
@@ -145,14 +132,22 @@ map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 set tags=tags;$HOME
 set complete-=i "dont search all included files
 
-" For using YouCompleteMe
-set nocompatible " already set for vundle
-let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/ycm_extra_conf.py'
 "call pathogen#infect()
 "call pathogen#helptags() " Load the help tags for all plugins
 "syntax on
 "filetype plugin indent on
 set encoding=utf-8
+
+
+" python with virtualenv support
+py << EOF
+import os
+import sys
+if 'VIRTUAL_ENV' in os.environ:
+    project_base_dir = os.environ['VIRTUAL_ENV']
+    activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+    execfile(activate_this, dict(__file__=activate_this))
+EOF
 
 "YouCompleteMe
 "-----------------------------------
@@ -283,10 +278,6 @@ filetype plugin on
 set modeline
 set modelines=5
 
-"TODO: get this back
-" DelimitMate
-"let delimitMate_expand_cr = 1
-"let delimitMate_expand_space = 1
 
 " little tool for getting the largest bo field for aimom
 function! GetLargestId(name)
