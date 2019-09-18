@@ -1,0 +1,111 @@
+" Vundle configuration file.
+" Add all plugins here and associated plugin configurations
+
+" :PluginInstall after adding a new
+" :PluginClean after deleting
+
+set nocompatible              " required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+
+" All Plugins
+
+" what does this do? 
+" Plugin 'tmhedberg/SimpylFold'
+
+" ide esque stuff i havent set up
+" Plugin 'vim-syntastic/syntastic'
+" Plugin 'valloric/youcompleteme'
+
+" Plugin 'nvie/vim-flake8'
+Plugin 'Raimondi/delimitMate'
+" Plugin 'craigemery/vim-autotag'
+
+" Plugin 'jnurmine/Zenburn' " this is a colorscheme to check out later
+
+" Plugin 'jistr/vim-nerdtree-tabs' " still need to learn this
+
+Plugin 'jmcantrell/vim-virtualenv'
+
+" fuzzy finding
+Plugin 'junegunn/fzf'
+
+"git blame and another git fun i havent learned yet
+Plugin 'tpope/vim-fugitive' 
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+
+"nerdtree
+"let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
+
+" in your plugin constants configuration section
+let g:virtualenv_auto_activate = 1
+
+
+" DelimitMate
+let delimitMate_expand_cr = 1
+let delimitMate_expand_space = 1
+
+
+" fzf
+set rtp+=/usr/local/opt/fzf
+
+
+" ----- YouCompleteMe ----- "
+"let g:ycm_global_ycm_extra_conf = '~/.vim/ycm_extra_conf.py'
+"let g:ycm_show_diagnostics_ui = 1
+"let g:ycm_max_diagnostics_to_display = 1000
+"let g:ycm_always_populate_location_list = 1
+"let g:ycm_autoclose_preview_window_after_completion = 1
+
+" let g:ycm_autoclose_preview_window_after_completion=1
+" map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/ycm_extra_conf.py'
+"let g:ycm_auto_trigger = 1
+"let g:ycm_semantic_triggers =  {
+"  \   'c' : ['->', '.'],
+"  \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+"  \             're!\[.*\]\s'],
+"  \   'ocaml' : ['.', '#'],
+"  \   'cpp,objcpp' : ['->', '.', '::'],
+"  \   'perl' : ['->'],
+"  \   'php' : ['->', '::'],
+"  \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+"  \   'ruby' : ['.', '::'],
+"  \   'lua' : ['.', ':'],
+"  \   'erlang' : [':'],
+"  \ }
+"let g:ycm_path_to_python_interpreter="/opt/bb/bin/python"
+"Only enable ycm for certain types of file
+"let g:ycm_filetype_whitelist = { 'cpp': 1, 'c': 1, 'python': 1}
+
+"diagmode of ycm
+"nnoremap <F3> <Esc> :YcmDiags<CR>
+"nnoremap <F2> :YcmCompleter FixIt<CR>
+"nnoremap <F7> :YcmCompleter GoToDefinition<CR>
+"nnoremap <F8> :YcmCompleter GoToDeclaration<CR>
+
+" ------CurineIncSw -----"
+"CurtineIncSw()<CR>
+
+" ------ Syntastic ----- "
+"let g:syntastic_cpp_compiler_options='
+" \ -I/bb/build/Linux-x86_64-32/release/robolibs/prod/lib/dpkgroot/opt/bb/include
+" \ -I/bb/build/Linux-x86_64-32/release/robolibs/prod/lib/dpkgroot/opt/bb/include/stlport
+" \'
+
+
+
+" vim: ft=vim

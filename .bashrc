@@ -11,12 +11,17 @@ alias brc="vim ~/dotfiles/.bashrc"
 
 # some env variables
 export EDITOR="vim"
+export DOT="~/dotfiles/"
 
 #some basics
 alias rless="less -r"
 alias vim="vim -p"
 alias vi="vim -p"
+
 alias ".."="cd .."
+alias "..."="cd ../.."
+alias "...."="cd ../../.."
+alias "....."="cd ../../../.."
 
 #vim in bash for mac
 set -o vi
@@ -38,8 +43,12 @@ alias gpoh="git push origin HEAD"
 alias gpfoh="git push --force origin HEAD"
 alias gpum="git pull upstream master"
 
+
+# cpp laziness
 alias mcb="make clean && make build"
 alias delobj="find . -type f -name '*.[d,o]' -delete;"
+
+
 
 git_changed_files() {
     #git diff --name-only $1 $(git merge-base $1 upstream/master)
@@ -55,6 +64,21 @@ _git_changed_files() {
 
 #complete -d -o default -F _git_changed_files big
 
+# complete but local only 
+#gco() {
+#    git checkout $1
+#}
+#
+#_gco()
+#{
+#    local cur=${COMP_WORDS[COMP_CWORD]}
+#    local branches=$(git branch)
+#    #COMPREPLY=( $( compgen -W "$cur") )
+#    #local d=${PWD//\//\ }
+#    COMPREPLY=( $( compgen -W "$branches" -- "$cur" ) )
+#}
+#complete -F _gco gco
+
 # fix weird wrappings
 alias fix_wrap="kill -WINCH $$"
 fix_wrap
@@ -64,6 +88,8 @@ fix_wrap
 export LSCOLORS=gxfxcxdxCxegedabagacad  # fg/bg - dir sym socket pipe ex block char ex ex dir dir
 #alias ls="ls --color=auto"  # this breaks on mac for some reason
 
+# source bash_completion script
+# [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
 
 
@@ -71,7 +97,7 @@ export LSCOLORS=gxfxcxdxCxegedabagacad  # fg/bg - dir sym socket pipe ex block c
 #make python interpreter work again. tied to .pythonrc
 #export PYTHONSTARTUP=$HOME/.pythonrc
 #dont write .pyc files
-#export PYTHONDONTWRITEBYTECODE=1
+export PYTHONDONTWRITEBYTECODE=1
 
 #history control
 export HISTCONTROL=ignoredups
@@ -105,7 +131,7 @@ mkcd() {
 }
 
 sed_all() {
-    find ./ -type f -not -path "./.git/*" -exec sed -i -e 's/'$1'/'$2'/g' {} \;
+    find ./ -type f -not -path './.git/*' -exec sed -i -e 's/'$1'/'$2'/g' {} \;
 }
 
 ######################
@@ -114,6 +140,7 @@ sed_all() {
 up()
 {
     if [ -z "$1" ]; then
+        echo "specify parent directory"
         return
     fi
     local upto=$1
@@ -169,6 +196,16 @@ watch_make() {
         printf \"${iterm2_mark}done.....\"" ; done
 }
 
+fvi() {
+    # data repo should be defined as the root of where you will want to live
+    #root=$(git_root)
+    #echo ${root}
+    #vi $(find . $(git_root) -not -path ".pants*" | fzf-tmux --multi --cycle)
+    vi $(find . ${DATA_REPO} -not -path ".pants*" | fzf-tmux --multi --cycle)
+}
+# bind ctrl-f to fvi
+bind '"\C-f":"fvi"'
+
 
 
 # last 3 dirs of pwd
@@ -210,12 +247,18 @@ COLOR_RESET='\[\e[0m\]'
 COLOR_RESET2='\e[0m'
 COLOR_RESET_MAC='\033[0;00m'
 
+
+# ------ GIT ------ #
 # old script for getting git completion
 #source ~/.git-completion.sh
 
 # this requires the git-completion.sh script
 function parse_git_branch {
     git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+function git_root() {
+    git rev-parse --show-toplevel
 }
 
  # Determine active Python virtualenv details.

@@ -1,18 +1,24 @@
-" init vundle
-source $HOME/dotfiles/.vim_plugins
+" init vundle and plugin code
+source $HOME/dotfiles/.vim.plugins
 
 " Some starter commands
-set nu
-"set relativenumber "too slow :/
+set nu  " having this set will set current line to be line number instead of 0
+set relativenumber "if things get slow, try toggling this
 set noswapfile
+" let me escape basically however i want
 inoremap jj <ESC>
-inoremap jJ <ESC>   " let me mess this up sometimes
+inoremap jJ <ESC>
+inoremap jk <ESC>
+inoremap kj <ESC>
+
 inoremap :w <ESC>:w
 noremap Y y$
-nnoremap \ ^
+
+" map leader key to \ properly
+let mapleader="\\"
 "set pastetoggle=<Leader>v " this doesnt really work right
 "set path+=src,codegen,generated
-nnoremap <Leader>w :%s/\s\+$//e<cr>  " clean trailing whitespace for the file
+
 
 "clear highlighting after search
 noremap <ESC><ESC> :noh<cr><ESC>
@@ -20,8 +26,9 @@ noremap K <nop>
 noremap C-[ <nop>
 noremap C-] <nop>
 "cnoremap sh bash  "sh !sh bash
-set mouse=a
 
+" mouse stuff
+set mouse=a
 function! ToggleMouse()
     " check if mouse is enabled
     if &mouse == 'a'
@@ -32,7 +39,6 @@ function! ToggleMouse()
         set mouse=a
     endif
 endfunc
-
 nnoremap <Leader>m :call ToggleMouse()<CR>
 
 
@@ -65,18 +71,19 @@ set nocp
 "au BufNewFile,BufRead *.make set filetype=make
 "au FileType make set noexpandtab
 
+" set aurora files to python
+au BufNewFile,BufRead *.aurora set filetype=python
+
 " For csc2 files
 au BufNewFile,BufRead *.csc2 set filetype=csc2
 au Filetype csc2 set wrap!
 
-" more general stuff
-set so=7 " leave 7 lines when moving screen
-set ruler " show row, column
 
+" more general stuff
 set laststatus=2
 set cf
-
 "set isk+=_,$,@,%,#, " these are not word separators
+set ruler " show row, column
 set lz " do not redraw during macros
 set diffopt+=iwhite
 set wildmenu "allow tabbing to autocomplete
@@ -98,7 +105,7 @@ colorscheme desert
 "set to whatever you like
 augroup vimrc_autocmds
     au BufEnter * highlight ColorColumn ctermbg=darkred
-    au BufEnter * call matchadd('ColorColumn', '\%111v.', 100) "set column nr
+    au BufEnter * call matchadd('ColorColumn', '\%121v.', 100) "set column nr
 augroup END
 
 
@@ -116,12 +123,14 @@ augroup END
 "map <C-e> $
 
 " Tab keyboard mapping
-:noremap <C-t> :tabnew<cr>:e<space>
-
+:noremap <C-t> :tabnew<cr>
+:noremap <C-e> :tabnew<cr>:e<space>
 :nmap<C-j> :tabprevious<cr>
-:nmap<C-k>  :tabnext<cr>
+:nmap<C-k> :tabnext<cr>
+
 " If in insert mode, leave insert mode before moving files
-imap <C-t>t <ESC>:tabnew<cr>:e<space>
+imap <C-t> <ESC>:tabnew<cr>
+imap <C-e> <ESC>:tabnew<cr>:e<space>
 :imap<C-j> <ESC>:tabprevious<cr>
 :imap<C-k> <ESC>:tabnext<cr>
 
@@ -140,55 +149,14 @@ set encoding=utf-8
 
 
 " python with virtualenv support
-py << EOF
-import os
-import sys
-if 'VIRTUAL_ENV' in os.environ:
-    project_base_dir = os.environ['VIRTUAL_ENV']
-    activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-    execfile(activate_this, dict(__file__=activate_this))
-EOF
-
-"YouCompleteMe
-"-----------------------------------
-let g:ycm_global_ycm_extra_conf = '~/.vim/ycm_extra_conf.py'
-let g:ycm_show_diagnostics_ui = 1
-let g:ycm_max_diagnostics_to_display = 1000
-let g:ycm_always_populate_location_list = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
-
-"this is experimental, these should be default settings!
-let g:ycm_auto_trigger = 1
-let g:ycm_semantic_triggers =  {
-  \   'c' : ['->', '.'],
-  \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
-  \             're!\[.*\]\s'],
-  \   'ocaml' : ['.', '#'],
-  \   'cpp,objcpp' : ['->', '.', '::'],
-  \   'perl' : ['->'],
-  \   'php' : ['->', '::'],
-  \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
-  \   'ruby' : ['.', '::'],
-  \   'lua' : ['.', ':'],
-  \   'erlang' : [':'],
-  \ }
-let g:ycm_path_to_python_interpreter="/opt/bb/bin/python"
-
-"diagmode of ycm
-"nnoremap <F3> <Esc> :YcmDiags<CR>
-"nnoremap <F2> :YcmCompleter FixIt<CR>
-"nnoremap <F7> :YcmCompleter GoToDefinition<CR>
-"nnoremap <F8> :YcmCompleter GoToDeclaration<CR>
-
-"always show gutter aka sign column, and clear its colour
-autocmd BufEnter * sign define dummy
-autocmd BufEnter * execute 'sign place 9999 line=1 name=dummy buffer=' . bufnr('')
-highlight clear SignColumn
-
-"Only enable ycm for certain types of file
-let g:ycm_filetype_whitelist = { 'cpp': 1, 'c': 1, 'python': 1}
-
-
+" py << EOF
+" import os
+" import sys
+" if 'VIRTUAL_ENV' in os.environ:
+"     project_base_dir = os.environ['VIRTUAL_ENV']
+"     activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+"     execfile(activate_this, dict(__file__=activate_this))
+" EOF
 
 
 " For multiple windows
@@ -200,61 +168,6 @@ cnoremap vr vertical resize
 " Navigation
 noremap ff t
 noremap FF T
-
-"For Bloomberg
-"inoremap JJ // <C-R>=expand("%:t")<CR><CR><CR>#include <sysutil_ident.h><CR>SYSUTIL_IDENT_RCSID(<C-R>=expand("%:t:r  ")<CR>_cpp, "$Id$ $CSID$")<CR><CR>#include <<C-R>=expand("%:t:r")<CR>.h><CR><CR>namespace BloombergLP {<CR><CR><CR><  CR>} // Close BloombergLP<UP><UP>
-"inoremap KK  // <C-R>=expand("%:t")<CR><CR>#ifndef INCLUDED_<C-R>=toupper(expand("%:t:r"))<CR><CR>#define INCLUDED_  <C-R>=toupper(expand("%:t:r"))<CR><CR><CR>#ifndef INCLUDED_SYSUTIL_IDENT<CR>#include <sysutil_ident.h><CR>#endif<CR>  SYSUTIL_IDENT_RCSID(<C-R>=expand("%:t:r")<CR>_h, "$Id$ $CSID$")<CR>SYSUTIL_PRAGMA_ONCE<CR><CR>namespace BloombergLP   {<CR><CR><CR><CR>} // Close BloombergLP<CR><CR>#endif<UP><UP><UP><UP>
-
-" For folding
-set foldenable
-set foldlevelstart=18 " open most folds by defautl"
-nnoremap <space> za
-let g:ycm_auto_trigger = 1
-let g:ycm_semantic_triggers =  {
-  \   'c' : ['->', '.'],
-  \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
-  \             're!\[.*\]\s'],
-  \   'ocaml' : ['.', '#'],
-  \   'cpp,objcpp' : ['->', '.', '::'],
-  \   'perl' : ['->'],
-  \   'php' : ['->', '::'],
-  \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
-  \   'ruby' : ['.', '::'],
-  \   'lua' : ['.', ':'],
-  \   'erlang' : [':'],
-  \ }
-let g:ycm_path_to_python_interpreter="/opt/bb/bin/python"
-
-"diagmode of ycm
-"nnoremap <F3> <Esc> :YcmDiags<CR>
-"nnoremap <F2> :YcmCompleter FixIt<CR>
-"nnoremap <F7> :YcmCompleter GoToDefinition<CR>
-"nnoremap <F8> :YcmCompleter GoToDeclaration<CR>
-
-"always show gutter aka sign column, and clear its colour
-autocmd BufEnter * sign define dummy
-autocmd BufEnter * execute 'sign place 9999 line=1 name=dummy buffer=' . bufnr('')
-highlight clear SignColumn
-
-"Only enable ycm for certain types of file
-let g:ycm_filetype_whitelist = { 'cpp': 1, 'c': 1, 'python': 1}
-
-
-
-
-" For multiple windows
-" set this to something else?
-nnoremap t <c-w>
-noremap tt <C-w><C-w>
-cnoremap vr vertical resize
-
-" Navigation
-noremap ff t
-noremap FF T
-
-"For Bloomberg
-"inoremap JJ // <C-R>=expand("%:t")<CR><CR><CR>#include <sysutil_ident.h><CR>SYSUTIL_IDENT_RCSID(<C-R>=expand("%:t:r  ")<CR>_cpp, "$Id$ $CSID$")<CR><CR>#include <<C-R>=expand("%:t:r")<CR>.h><CR><CR>namespace BloombergLP {<CR><CR><CR><  CR>} // Close BloombergLP<UP><UP>
-"inoremap KK  // <C-R>=expand("%:t")<CR><CR>#ifndef INCLUDED_<C-R>=toupper(expand("%:t:r"))<CR><CR>#define INCLUDED_  <C-R>=toupper(expand("%:t:r"))<CR><CR><CR>#ifndef INCLUDED_SYSUTIL_IDENT<CR>#include <sysutil_ident.h><CR>#endif<CR>  SYSUTIL_IDENT_RCSID(<C-R>=expand("%:t:r")<CR>_h, "$Id$ $CSID$")<CR>SYSUTIL_PRAGMA_ONCE<CR><CR>namespace BloombergLP   {<CR><CR><CR><CR>} // Close BloombergLP<CR><CR>#endif<UP><UP><UP><UP>
 
 " For folding
 set foldenable
@@ -262,15 +175,17 @@ set foldlevelstart=18 " open most folds by defautl"
 nnoremap <space> za
 set foldmethod=indent "others are marker, manual, expr, syntax, diff
 
+"always show gutter aka sign column, and clear its colour
+autocmd BufEnter * sign define dummy
+autocmd BufEnter * execute 'sign place 9999 line=1 name=dummy buffer=' . bufnr('')
+highlight clear SignColumn
+
 " Colors
 " make comments dark gray
 hi Comment ctermfg=darkgray
 " make python docstring color like comments
 syn region Comment start=/\'\'\'/ end=/\'\'\'/
 
-"custom with leader
-let mapleader = "\\"
-inoremap <Leader>p import pdb; pdb.set_trace()
 
 " for modline maybe?
 set nocompatible
@@ -279,26 +194,13 @@ set modeline
 set modelines=5
 
 
-" little tool for getting the largest bo field for aimom
-function! GetLargestId(name)
-    return "hi"
-    "let max_id = system("grep 'id: ' " + a:name + " | sed -e 's/^.*id: //\' | sort -n | tail -1")
-    "echom max_id
-    "let new_id = max_id + 1
-    "echom new_id
-endfunc
-
 "nnoremap <Leader>m :call ToggleMouse()<CR>
 
-
+" useful functions
+inoremap <Leader>p import pdb; pdb.set_trace()
+nnoremap <Leader>w :%s/\s\+$//e<cr>  " clean trailing whitespace for the file
 nnoremap  <Leader>s :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
-" CurineIncSw " switched out for above
-"CurtineIncSw()<CR>
+noremap <Leader>f :FZF $DATA_REPO<cr>
 
-" Syntastic
-"let g:syntastic_cpp_compiler_options='
-" \ -I/bb/build/Linux-x86_64-32/release/robolibs/prod/lib/dpkgroot/opt/bb/include
-" \ -I/bb/build/Linux-x86_64-32/release/robolibs/prod/lib/dpkgroot/opt/bb/include/stlport
-" \'
 
 
