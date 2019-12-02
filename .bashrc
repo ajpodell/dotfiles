@@ -42,6 +42,8 @@ alias gca="git commit -am "
 alias gpoh="git push origin HEAD"
 alias gpfoh="git push --force origin HEAD"
 alias gpum="git pull upstream master"
+alias gpom="git pull origin master"
+alias gdom="git diff origin/master"
 
 
 # cpp laziness
@@ -53,7 +55,7 @@ alias delobj="find . -type f -name '*.[d,o]' -delete;"
 git_changed_files() {
     #git diff --name-only $1 $(git merge-base $1 upstream/master)
     local branch_name=$(git symbolic-ref --short -q HEAD)
-    git diff --name-only $branch_name $(git merge-base $branch_name upstream/master) # this would do from last pr
+    git diff --name-only $branch_name $(git merge-base $branch_name origin/master) # this would do from last pr
     #git diff --name-only $branch_name $(git merge-base $branch_name origin/$branch_name) # this would do from remot  e
 }
 
@@ -89,8 +91,12 @@ export LSCOLORS=gxfxcxdxCxegedabagacad  # fg/bg - dir sym socket pipe ex block c
 #alias ls="ls --color=auto"  # this breaks on mac for some reason
 
 # source bash_completion script
-# [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
-
+# make sure to run "brew install bash-completion@2" on new mach
+if [ -f $(brew --prefix)/etc/bash_completion  ]; then
+    . $(brew --prefix)/etc/bash_completion
+fi
+export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
 
 #python stuff
@@ -109,9 +115,9 @@ shopt -s cdspell # let me spell poorly
 
 
 # colorize output unless piping to a file. dont look at object binaries
-# THIS MAGICALLY BREAKS THINGS ON MAC! DON'T UNCOMMENT UNTIL FURTHER RESEARCH
-#export GREP_OPTIONS='--color=auto --exclude=\*.o --exclude=\*.depends --exclude=\*.d --include=\*.fsm --include=\*.f --include=\*.c --include=\*.cpp --include=\*.py --include=\*.h --include=\*q --include=\*tmpl --include=\*yaml -nr'
-#export GREP_OPTIONS='--color=auto --exclude=\*\.o --exclude-dir=\.git --exclude=tags -nr' # not this one
+# the line numbers mess up fzf history search. disable for now
+#export GREP_OPTIONS='--color=auto --exclude=\*\.o --exclude-dir=""/Users/apodell/data/.git" --exclude-dir="/Users/apodell/data/tags" -nr' # not this one
+#export GREP_OPTIONS='--color=auto' # not this one
 #alias sgrep="GREP_OPTIONS= grep"
 
 ######################
@@ -196,6 +202,9 @@ watch_make() {
         printf \"${iterm2_mark}done.....\"" ; done
 }
 
+
+# source fzf and add some fun hotkeys
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 fvi() {
     # data repo should be defined as the root of where you will want to live
     #root=$(git_root)
@@ -288,6 +297,6 @@ PROMPT_COMMAND='prompt'
 
 # RUN TMUX AT STARTUP
 if [[ ! $TERM =~ screen-256color ]]; then
-    tmux # attach || tmux
+    tmux attach || tmux
 fi
 
