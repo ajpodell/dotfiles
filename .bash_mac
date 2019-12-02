@@ -1,0 +1,6 @@
+echo "I'm on mac"
+
+# ls colors for mac
+export LSCOLORS=gxfxcxdxCxegedabagacad  # fg/bg - dir sym socket pipe ex block char ex ex dir dir
+
+# vim: set filetype=sh:

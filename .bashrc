@@ -3,8 +3,32 @@
 # Added by Aaron Podell
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+export DOTPATH="/Users/apodell/dotfiles"
 
 # TODO: split up mac and linux portions
+case "$(uname -s)" in
+   Darwin)
+  	 if [ -f $DOTPATH/.bash_mac ]; then
+		source $DOTPATH/.bash_mac
+	 fi
+     ;;
+   Linux)
+     echo 'Linux'
+  	 if [ -f $DOTPATH/.bash_linux ]; then
+		source $DOTPATH/.bash_linux
+	 fi
+     ;;
+   CYGWIN*|MINGW32*|MSYS*)
+     echo 'why are you on windows?'
+     ;;
+   # Add here more strings to compare
+   # See correspondence table at the bottom of this answer
+   *)
+     echo 'Other OS' 
+     ;;
+esac
+
+
 
 # NOTE: always clone the dotfiles repo into $HOME/dotfiles
 alias brc="vim ~/dotfiles/.bashrc"
@@ -85,10 +109,6 @@ _git_changed_files() {
 alias fix_wrap="kill -WINCH $$"
 fix_wrap
 
-# change colors for ls
-#export LS_COLORS='di='${COLOR_CYAN_di} #  for linux
-export LSCOLORS=gxfxcxdxCxegedabagacad  # fg/bg - dir sym socket pipe ex block char ex ex dir dir
-#alias ls="ls --color=auto"  # this breaks on mac for some reason
 
 # source bash_completion script
 # make sure to run "brew install bash-completion@2" on new mach
@@ -110,7 +130,6 @@ export HISTCONTROL=ignoredups
 shopt -s histverify
 
 shopt -s cdspell # let me spell poorly
-#shopt -s globstar # for use with jd function # this doesnt work on mac/iterm
 
 
 
