@@ -42,6 +42,13 @@ Plugin 'junegunn/fzf'
 "git blame and another git fun i havent learned yet
 Plugin 'tpope/vim-fugitive' 
 
+" status bar stuff
+"Plugin 'vim-airline/vim-airline'
+" Just show the filename (no path) in the tab
+"let g:airline#extensions#tabline#fnamemod = ':t'
+
+
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
