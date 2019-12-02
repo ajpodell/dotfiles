@@ -1,16 +1,18 @@
 " init vundle and plugin code
 source $HOME/dotfiles/.vim.plugins
 
+
 " Some starter commands
 set nu  " having this set will set current line to be line number instead of 0
 set relativenumber "if things get slow, try toggling this
-set noswapfile
-" let me escape basically however i want
-inoremap jj <ESC>
-inoremap jJ <ESC>
-inoremap jk <ESC>
-inoremap kj <ESC>
+set noswapfile  " no backup files
 
+" let me escape basically however i want
+"inoremap jj <ESC>
+"inoremap jJ <ESC>
+"inoremap jk <ESC>
+
+" save out of insert mode
 inoremap :w <ESC>:w
 noremap Y y$
 
@@ -27,6 +29,10 @@ noremap C-[ <nop>
 noremap C-] <nop>
 "cnoremap sh bash  "sh !sh bash
 
+
+set autochdir " change to current directory within vim when opening a file
+cnoremap cdf cd %:h   " use cdf to move to current directory.
+
 " mouse stuff
 set mouse=a
 function! ToggleMouse()
@@ -41,7 +47,7 @@ function! ToggleMouse()
 endfunc
 nnoremap <Leader>m :call ToggleMouse()<CR>
 
-
+" stuff about tabbing
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
@@ -49,6 +55,7 @@ set expandtab "tabs to spaces
 filetype plugin indent on
 set shiftround " use multiples of shiftwidth when using < and >
 set cindent
+set cinoptions=>1s "tab 1x shiftwidth on newline"
 
 set showmatch " show matching parens
 set ignorecase
@@ -57,14 +64,13 @@ set smarttab
 syntax on
 
 "find what these are
-set cino=>4
 au FileType * setl fo-=cro
 set incsearch " allow using s//new_word after search
 set nostartofline
 
 set lazyredraw
 set ttyfast
-set nocp
+set nocompatible " stuff with vi compatibility. not exactly sure what this does
 
 " For makefiles
 "au BufNewFile,BufRead Makefile set filetype=make
@@ -81,10 +87,10 @@ au Filetype csc2 set wrap!
 
 " more general stuff
 set laststatus=2
-set cf
+set cf  " something about error files"
 "set isk+=_,$,@,%,#, " these are not word separators
 set ruler " show row, column
-set lz " do not redraw during macros
+set lazyredraw " do not redraw during macros
 set diffopt+=iwhite
 set wildmenu "allow tabbing to autocomplete
 set wildmode=list:longest
@@ -96,6 +102,7 @@ set scrolloff=3
 set timeout timeoutlen=1000 ttimeoutlen=100
 set hlsearch
 colorscheme desert
+set statusline=%F%h%m  " show full path in status bar, help buffer, then modfiied"
 
 "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 "match OverLength /\%81v.*/
@@ -123,23 +130,23 @@ augroup END
 "map <C-e> $
 
 " Tab keyboard mapping
-:noremap <C-t> :tabnew<cr>
+:noremap <C-t> :tabnew<cr>:FZF $DATA_REPO<cr>
 :noremap <C-e> :tabnew<cr>:e<space>
 :nmap<C-j> :tabprevious<cr>
 :nmap<C-k> :tabnext<cr>
 
 " If in insert mode, leave insert mode before moving files
-imap <C-t> <ESC>:tabnew<cr>
+imap <C-t> <ESC>:tabnew<cr>:FZF $DATA_REPO<cr>
 imap <C-e> <ESC>:tabnew<cr>:e<space>
-:imap<C-j> <ESC>:tabprevious<cr>
+:imap<C-j> <ESC>:tabprevious<cr>cr
 :imap<C-k> <ESC>:tabnext<cr>
 
 " for ctags
 "":noremap <Leader>t <C-t>
 map <Leader>t :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-set tags=tags;$HOME
-set complete-=i "dont search all included files
+" set tags=tags;$HOME
+" set complete-=i "dont search all included files
 
 "call pathogen#infect()
 "call pathogen#helptags() " Load the help tags for all plugins
@@ -159,21 +166,21 @@ set encoding=utf-8
 " EOF
 
 
-" For multiple windows
+" For multiple windows touse t
 " set this to something else?
-nnoremap t <c-w>
-noremap tt <C-w><C-w>
+"nnoremap t <c-w>
+"noremap tt <C-w><C-w>
+"noremap ff t
+"noremap FF T
 cnoremap vr vertical resize
 
 " Navigation
-noremap ff t
-noremap FF T
 
 " For folding
-set foldenable
-set foldlevelstart=18 " open most folds by defautl"
-nnoremap <space> za
-set foldmethod=indent "others are marker, manual, expr, syntax, diff
+"set foldenable
+"set foldlevelstart=18 " open most folds by defautl"
+"nnoremap <space> za
+"set foldmethod=indent "others are marker, manual, expr, syntax, diff
 
 "always show gutter aka sign column, and clear its colour
 autocmd BufEnter * sign define dummy
@@ -181,8 +188,8 @@ autocmd BufEnter * execute 'sign place 9999 line=1 name=dummy buffer=' . bufnr('
 highlight clear SignColumn
 
 " Colors
-" make comments dark gray
-hi Comment ctermfg=darkgray
+highlight Comment ctermfg=darkgray   " make comments dark gray
+highlight Visual ctermbg=black   " without this, cant see comments in visual mode
 " make python docstring color like comments
 syn region Comment start=/\'\'\'/ end=/\'\'\'/
 
@@ -204,3 +211,43 @@ noremap <Leader>f :FZF $DATA_REPO<cr>
 
 
 
+
+" only show the name of the tab in tabname
+function MyTabLine()
+    let s = ''
+    for i in range(tabpagenr('$'))
+        " select the highlighting
+        if i + 1 == tabpagenr()
+            let s .= '%#TabLineSel#'
+        else
+            let s .= '%#TabLine#'
+        endif
+
+        " set the tab page number (for mouse clicks)
+        let s .= '%' . (i + 1) . 'T'
+
+        " the label is made by MyTabLabel()
+        let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
+    endfor
+
+    " after the last tab fill with TabLineFill and reset tab page nr
+    let s .= '%#TabLineFill#%T'
+
+    " right-align the label to close the current tab page
+    if tabpagenr('$') > 1
+        let s .= '%=%#TabLine#%999Xclose'
+    endif
+
+    return s
+
+endfunction
+
+function MyTabLabel(n)
+    let buflist = tabpagebuflist(a:n)
+    let winnr = tabpagewinnr(a:n)
+    "return bufname(buflist[winnr - 1])
+    return fnamemodify(bufname(buflist[winnr - 1]), ':t')
+endfunction
+
+set tabline=%!MyTabLine()
+" end tab stuff
