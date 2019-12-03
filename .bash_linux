@@ -1,3 +1,7 @@
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# Added by Aaron Podell
+# Linux only bash configurations
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # change colors for ls
 export LS_COLORS='di='${COLOR_CYAN_di} #  for linux
@@ -5,4 +9,5 @@ export LS_COLORS='di='${COLOR_CYAN_di} #  for linux
 alias ls="ls --color=auto"  # this breaks on mac for some reason
 
 shopt -s globstar # for use with jd function, not really sure what this does
+
 # vim: set filetype=sh:
