@@ -3,7 +3,9 @@
 # Added by Aaron Podell
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-export DOTPATH="/Users/apodell/dotfiles"
+export DOTPATH="/Users/$(whoami)/dotfiles"
+export dot=$DOTPATH
+export INPUTRC=$DOTPATH/.inputrc
 
 # TODO: split up mac and linux portions
 case "$(uname -s)" in

@@ -1,0 +1,22 @@
+# a basic setup script for starting up a new mac
+
+# install homebrew
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"/
+
+# install vundle
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim;
+
+# TODO: add a thing if dotpath doesnt exit - bail now. echo you gotta source the bashrc
+
+# create top-level files
+if [ ! -f $HOME/.tmux.conf ]; then
+    echo "source-file $DOTPATH/.tmux.conf" > $HOME/.tmux.conf
+fi
+if [ ! -f $HOME/.bash_profile ]; then
+    echo "source $DOTPATH/.bashrc" > $HOME/.bash_profile
+fi
+if [ ! -f $HOME/.vimrc ]; then
+    echo "source $DOTPATH/.bashrc" > $HOME/.vimrc
+fi
+
+# vim: ft=sh
