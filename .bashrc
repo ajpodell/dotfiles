@@ -4,8 +4,8 @@
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 export DOTPATH="/Users/$(whoami)/dotfiles"
-export dot=$DOTPATH
 export INPUTRC=$DOTPATH/.inputrc
+alias dot="cd $DOTPATH"
 
 # TODO: split up mac and linux portions
 case "$(uname -s)" in
@@ -37,7 +37,6 @@ alias brc="vim ~/dotfiles/.bashrc"
 
 # some env variables
 export EDITOR="vim"
-export DOT="~/dotfiles/"
 
 #some basics
 alias rless="less -r"
