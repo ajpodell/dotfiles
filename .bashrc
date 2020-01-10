@@ -7,7 +7,7 @@ export DOTPATH="/Users/$(whoami)/dotfiles"
 export INPUTRC=$DOTPATH/.inputrc
 alias dot="cd $DOTPATH"
 
-# TODO: split up mac and linux portions
+# Load specific files for mac or linux
 case "$(uname -s)" in
    Darwin)
   	 if [ -f $DOTPATH/.bash_mac ]; then
@@ -15,7 +15,6 @@ case "$(uname -s)" in
 	 fi
      ;;
    Linux)
-     echo 'Linux'
   	 if [ -f $DOTPATH/.bash_linux ]; then
 		source $DOTPATH/.bash_linux
 	 fi
@@ -58,6 +57,9 @@ set -o vi
 alias c="cd"
 alias l="ls"
 
+##################################################################
+############################## GIT ###############################
+##################################################################
 alias g="git"
 alias gs="git status"
 alias ga="git add"
@@ -69,19 +71,23 @@ alias gpfoh="git push --force origin HEAD"
 alias gpum="git pull upstream master"
 alias gpom="git pull origin master"
 alias gdom="git diff origin/master"
-
-
-# cpp laziness
-alias mcb="make clean && make build"
-alias delobj="find . -type f -name '*.[d,o]' -delete;"
-
-
+alias gco="git checkout"
+gfr() {
+    git fetch $1 $2;
+    git rebase $1/$2;
+}
+# Source bash_completion script. Make sure to run "brew install bash-completion@2" on new machines
+if [ -f $(brew --prefix)/etc/bash_completion  ]; then
+    . $(brew --prefix)/etc/bash_completion
+fi
+export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
 git_changed_files() {
     #git diff --name-only $1 $(git merge-base $1 upstream/master)
     local branch_name=$(git symbolic-ref --short -q HEAD)
     git diff --name-only $branch_name $(git merge-base $branch_name origin/master) # this would do from last pr
-    #git diff --name-only $branch_name $(git merge-base $branch_name origin/$branch_name) # this would do from remot  e
+    #git diff --name-only $branch_name $(git merge-base $branch_name origin/$branch_name) # this would do from remote
 }
 
 _git_changed_files() {
@@ -91,7 +97,7 @@ _git_changed_files() {
 
 #complete -d -o default -F _git_changed_files big
 
-# complete but local only 
+# complete but local only  -- this isnt really needed with autocomplete fixed, set up an alias
 #gco() {
 #    git checkout $1
 #}
@@ -105,19 +111,20 @@ _git_changed_files() {
 #    COMPREPLY=( $( compgen -W "$branches" -- "$cur" ) )
 #}
 #complete -F _gco gco
+##################################################################
+############################ END GIT #############################
+##################################################################
+
+# cpp laziness
+alias mcb="make clean && make build"
+alias delobj="find . -type f -name '*.[d,o]' -delete;"
+
 
 # fix weird wrappings
 alias fix_wrap="kill -WINCH $$"
 fix_wrap
 
 
-# source bash_completion script
-# make sure to run "brew install bash-completion@2" on new mach
-if [ -f $(brew --prefix)/etc/bash_completion  ]; then
-    . $(brew --prefix)/etc/bash_completion
-fi
-export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
-[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
 
 #python stuff
@@ -137,16 +144,9 @@ shopt -s cdspell # let me spell poorly
 # colorize output unless piping to a file. dont look at object binaries
 # the line numbers mess up fzf history search. disable for now
 #export GREP_OPTIONS='--color=auto --exclude=\*\.o --exclude-dir=""/Users/apodell/data/.git" --exclude-dir="/Users/apodell/data/tags" -nr' # not this one
-#export GREP_OPTIONS='--color=auto' # not this one
+export GREP_OPTIONS='--color=auto --binary-file=without-match --exclude-dir=\.pants\.d' # not this one
 #alias sgrep="GREP_OPTIONS= grep"
 
-######################
-######## GIT #########
-######################
-gfr() {
-    git fetch $1 $2;
-    git rebase $1/$2;
-}
 
 ######################
 ###### UTILITY #######
@@ -157,7 +157,8 @@ mkcd() {
 }
 
 sed_all() {
-    find ./ -type f -not -path './.git/*' -exec sed -i -e 's/'$1'/'$2'/g' {} \;
+    # for mac, sed needs a backup file, for linux, it needs the -e i think? 
+    find ./ -type f -not -path './.git/*' -exec sed -i '' 's/'$1'/'$2'/g' {} \;
 }
 
 ######################
@@ -277,9 +278,6 @@ COLOR_RESET2='\e[0m'
 COLOR_RESET_MAC='\033[0;00m'
 
 
-# ------ GIT ------ #
-# old script for getting git completion
-#source ~/.git-completion.sh
 
 # this requires the git-completion.sh script
 function parse_git_branch {
