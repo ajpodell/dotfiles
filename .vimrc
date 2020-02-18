@@ -209,6 +209,17 @@ nnoremap <Leader>w :%s/\s\+$//e<cr>  " clean trailing whitespace for the file
 nnoremap  <Leader>s :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
 noremap <Leader>f :FZF $DATA_REPO<cr>
 
+" this is for making netrw (vim explorer) behave more like nerdtree, have not used much
+" let g:netrw_banner = 1 " 0 to disable"
+" let g:netrw_liststyle = 3
+" let g:netrw_browse_split = 4
+" let g:netrw_altv = 1
+" let g:netrw_winsize = 25
+" augroup ProjectDrawer
+"     autocmd!
+"     autocmd VimEnter * :Vexplore
+" augroup END
+
 
 
 

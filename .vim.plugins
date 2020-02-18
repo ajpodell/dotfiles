@@ -9,6 +9,8 @@ filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
+filetype plugin indent on    " required
+
 call vundle#begin()
 
 " alternatively, pass a path where Vundle should install plugins
@@ -27,17 +29,37 @@ Plugin 'gmarik/Vundle.vim'
 " Plugin 'valloric/youcompleteme'
 
 " Plugin 'nvie/vim-flake8'
+
+" DelimitMate
 Plugin 'Raimondi/delimitMate'
+let delimitMate_expand_cr = 1
+let delimitMate_expand_space = 1
+
 " Plugin 'craigemery/vim-autotag'
 
 " Plugin 'jnurmine/Zenburn' " this is a colorscheme to check out later
 
-" Plugin 'jistr/vim-nerdtree-tabs' " still need to learn this
+" Plugin 'preservim/nerdtree'
+" nnoremap <Leader>e :NERDTree<cr>
+
+" Plugin 'jistr/vim-nerdtree-tabs' " still need to learn this. This isnt supported anymore
 
 Plugin 'jmcantrell/vim-virtualenv'
 
 " fuzzy finding
 Plugin 'junegunn/fzf'
+set rtp+=/usr/local/opt/fzf
+
+" better autocomplete and function defs
+Plugin 'davidhalter/jedi-vim'
+let g:jedi#use_tabs_not_buffers = 1
+let g:jedi#popup_on_dot = 0  " maybe if i get more used to it, consider enabling this
+autocmd FileType python setlocal completeopt-=preview  " dont show the docstring preview
+
+" TOLOOK AT
+" supertab
+" deoplete-plugins/deoplete-jedi
+
 
 "git blame and another git fun i havent learned yet
 Plugin 'tpope/vim-fugitive' 
@@ -48,10 +70,9 @@ Plugin 'tpope/vim-fugitive'
 "let g:airline#extensions#tabline#fnamemod = ':t'
 
 
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+" syntax highlighting for thrift
+Bundle 'solarnz/thrift.vim'
+au BufNewFile,BufRead *.thrift setlocal filetype=thrift " this should be in the package, but isnt working"
 
 
 "nerdtree
@@ -61,13 +82,6 @@ filetype plugin indent on    " required
 let g:virtualenv_auto_activate = 1
 
 
-" DelimitMate
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
-
-
-" fzf
-set rtp+=/usr/local/opt/fzf
 
 
 " ----- YouCompleteMe ----- "
@@ -113,6 +127,7 @@ set rtp+=/usr/local/opt/fzf
 " \ -I/bb/build/Linux-x86_64-32/release/robolibs/prod/lib/dpkgroot/opt/bb/include/stlport
 " \'
 
-
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
 
 " vim: ft=vim
