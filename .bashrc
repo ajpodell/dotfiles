@@ -64,6 +64,7 @@ alias g="git"
 alias gs="git status"
 alias ga="git add"
 alias gb="git branch"
+alias gd="git diff"
 alias grc="git rebase --continue"
 alias gca="git commit -am "
 alias gpoh="git push origin HEAD"
@@ -72,6 +73,10 @@ alias gpum="git pull upstream master"
 alias gpom="git pull origin master"
 alias gdom="git diff origin/master"
 alias gco="git checkout"
+
+# add the git scripts to path
+export PATH=$PATH:$DOTPATH/git_scripts
+
 gfr() {
     git fetch $1 $2;
     git rebase $1/$2;
@@ -94,6 +99,8 @@ _git_changed_files() {
     IFS=$'\n' tmp=( $(compgen -W "$(git branch)" -- "${COMP_WORDS[$COMP_CWORD]}" ))
     COMPREPLY=( "${tmp[@]// /\ }" )
 }
+
+
 
 #complete -d -o default -F _git_changed_files big
 

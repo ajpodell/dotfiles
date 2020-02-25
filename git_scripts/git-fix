@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+$EDITOR -p $(git diff --name-only | uniq)
+
+# vim: ft=sh

@@ -84,6 +84,15 @@ au BufNewFile,BufRead *.aurora set filetype=python
 au BufNewFile,BufRead *.csc2 set filetype=csc2
 au Filetype csc2 set wrap!
 
+" for react files
+au BufNewFile,BufRead *.jsx set tabstop=2 shiftwidth=2 softtabstop=2
+
+" for copy pasting between tmux
+" copy something in vim, then call c to write it to a file
+nmap <Leader>c :call writefile(split(@@, "\n", 1), '/tmp/vimcopy')<CR>
+" me trying to update it
+" noremap <Leader>c :call writefile(@@, '/tmp/vimcopy', 'b')<CR>
+noremap <leader>v :r! cat /tmp/vimcopy<CR>
 
 " more general stuff
 set laststatus=2
