@@ -21,6 +21,11 @@ Plugin 'gmarik/Vundle.vim'
 
 " All Plugins
 
+" adam recs
+" ale - linters
+" worp - project ale is under
+
+
 " what does this do? 
 " Plugin 'tmhedberg/SimpylFold'
 
@@ -49,6 +54,8 @@ Plugin 'jmcantrell/vim-virtualenv'
 " fuzzy finding
 Plugin 'junegunn/fzf'
 set rtp+=/usr/local/opt/fzf
+"noremap <Leader>f :FZF $DATA_REPO --sink=e<cr> " moved this to .vim.plugin
+noremap <Leader>f :call fzf#run({'source': 'fd . $DATA_REPO --type f --hidden -E .git', 'sink': 'e'})<CR>
 
 " better autocomplete and function defs
 Plugin 'davidhalter/jedi-vim'

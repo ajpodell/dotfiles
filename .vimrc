@@ -183,6 +183,16 @@ set encoding=utf-8
 "noremap FF T
 cnoremap vr vertical resize
 
+" cool function to create a url w/ respect to a file. More of an exercise since created around a specific url. It also doesnt work sometimes, but idk when
+" todo: split out getting the file_path
+function! GetUrl(base_url)
+    let l:current_file=expand('%:t')
+    let l:line = line('.')
+    let l:file_path = trim(system('git ls-files --full-name ' . l:current_file))
+    let l:url = a:base_url . l:file_path . '#' . l:line
+    echo l:url
+endfunc
+
 " Navigation
 
 " For folding
@@ -216,7 +226,7 @@ set modelines=5
 inoremap <Leader>p import pdb; pdb.set_trace()
 nnoremap <Leader>w :%s/\s\+$//e<cr>  " clean trailing whitespace for the file
 nnoremap  <Leader>s :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
-noremap <Leader>f :FZF $DATA_REPO<cr>
+" noremap <Leader>f :FZF $DATA_REPO<cr> " moved this to .vim.plugin
 
 " this is for making netrw (vim explorer) behave more like nerdtree, have not used much
 " let g:netrw_banner = 1 " 0 to disable"
