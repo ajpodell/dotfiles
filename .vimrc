@@ -131,8 +131,8 @@ augroup END
 "Navigation mapping
 "nnoremap ' `
 "nnoremap ` '
-"nnoremap j gj
-"nnoremap k gk
+nnoremap j gj
+nnoremap k gk
 "nnoremap gk k
 "nnoremap gj j
 "map <C-a> ^
@@ -175,12 +175,6 @@ set encoding=utf-8
 " EOF
 
 
-" For multiple windows touse t
-" set this to something else?
-"nnoremap t <c-w>
-"noremap tt <C-w><C-w>
-"noremap ff t
-"noremap FF T
 cnoremap vr vertical resize
 
 " cool function to create a url w/ respect to a file. More of an exercise since created around a specific url. It also doesnt work sometimes, but idk when
@@ -226,7 +220,6 @@ set modelines=5
 inoremap <Leader>p import pdb; pdb.set_trace()
 nnoremap <Leader>w :%s/\s\+$//e<cr>  " clean trailing whitespace for the file
 nnoremap  <Leader>s :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
-" noremap <Leader>f :FZF $DATA_REPO<cr> " moved this to .vim.plugin
 
 " this is for making netrw (vim explorer) behave more like nerdtree, have not used much
 " let g:netrw_banner = 1 " 0 to disable"
