@@ -42,6 +42,10 @@ alias rless="less -r"
 alias vim="vim -p"
 alias vi="vim -p"
 
+# this doesnt work, or really make sense
+#alias vi="vim -p -c 'execute \"normal \".get(g:,\"mapleader\",\"\\\").\"f\"'"
+
+
 alias ".."="cd .."
 alias "..."="cd ../.."
 alias "...."="cd ../../.."
@@ -68,7 +72,8 @@ alias gpfoh="git push --force origin HEAD"
 alias gpum="git pull upstream master"
 alias gpom="git pull origin master"
 alias gdom="git diff origin/master"
-alias gco="git checkout"
+alias gco='git checkout `FZF_DEFAULT_COMMAND="git branch" fzf`'
+
 
 # add the git scripts to path
 export PATH=$PATH:$DOTPATH/git_scripts

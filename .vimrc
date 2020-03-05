@@ -135,13 +135,15 @@ nnoremap k gk
 "map <C-e> $
 
 " Tab keyboard mapping
-:noremap <C-t> :tabnew<cr>:FZF $DATA_REPO<cr>
+":noremap <C-t> :tabnew<cr>:FZF $DATA_REPO<cr>
+noremap <C-t> :call FastFzf()<CR>
 :noremap <C-e> :tabnew<cr>:e<space>
 :nmap<C-j> :tabprevious<cr>
 :nmap<C-k> :tabnext<cr>
 
 " If in insert mode, leave insert mode before moving files
-imap <C-t> <ESC>:tabnew<cr>:FZF $DATA_REPO<cr>
+"imap <C-t> <ESC>:tabnew<cr>:FZF $DATA_REPO<cr>
+imap <C-t> :tabnew<cr>:call FastFzf()<CR>
 imap <C-e> <ESC>:tabnew<cr>:e<space>
 :imap<C-j> <ESC>:tabprevious<cr>cr
 :imap<C-k> <ESC>:tabnext<cr>
@@ -183,6 +185,13 @@ function! GetUrl(base_url)
     echo l:url
 endfunc
 
+function! GitRoot()
+    " git root is defined in git_scripts
+    return trim(system('git root'))
+endfunc
+
+
+
 " Navigation
 
 " For folding
@@ -208,9 +217,6 @@ set nocompatible
 filetype plugin on
 set modeline
 set modelines=5
-
-
-"nnoremap <Leader>m :call ToggleMouse()<CR>
 
 " useful functions
 inoremap <Leader>p import pdb; pdb.set_trace()
