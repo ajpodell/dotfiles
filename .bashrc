@@ -53,9 +53,6 @@ alias "....."="cd ../../../.."
 
 #vim in bash for mac
 set -o vi
-#bindkey -v
-#bindkey -M viins md-mode
-
 
 ##################################################################
 ############################## GIT ###############################
@@ -72,7 +69,11 @@ alias gpfoh="git push --force origin HEAD"
 alias gpum="git pull upstream master"
 alias gpom="git pull origin master"
 alias gdom="git diff origin/master"
-alias gco='git checkout `FZF_DEFAULT_COMMAND="git branch" fzf`'
+alias gco='git checkout'
+alias gc='git checkout `FZF_DEFAULT_COMMAND="git branch" fzf`'
+# bring autocomplete to g alias
+complete -o bashdefault -o default -o nospace -F _fzf_path_completion g
+
 
 
 # add the git scripts to path
@@ -102,23 +103,16 @@ _git_changed_files() {
 }
 
 
+# this requires the git-completion.sh script
+function parse_git_branch {
+    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
 
-#complete -d -o default -F _git_changed_files big
+function git_root() {
+    git rev-parse --show-toplevel
+}
 
-# complete but local only  -- this isnt really needed with autocomplete fixed, set up an alias
-#gco() {
-#    git checkout $1
-#}
-#
-#_gco()
-#{
-#    local cur=${COMP_WORDS[COMP_CWORD]}
-#    local branches=$(git branch)
-#    #COMPREPLY=( $( compgen -W "$cur") )
-#    #local d=${PWD//\//\ }
-#    COMPREPLY=( $( compgen -W "$branches" -- "$cur" ) )
-#}
-#complete -F _gco gco
+
 ##################################################################
 ############################ END GIT #############################
 ##################################################################
@@ -128,9 +122,11 @@ alias mcb="make clean && make build"
 alias delobj="find . -type f -name '*.[d,o]' -delete;"
 
 
-# fix weird wrappings
-alias fix_wrap="kill -WINCH $$"
+# fix weirdness in bash
+alias fix_wrap="kill -WINCH $$"  # this will kill the weird line breaks that happens sometimes
 fix_wrap
+
+stty sane  # intended to fix the screen no longer showing typed chars
 
 
 
@@ -143,16 +139,21 @@ export PYTHONDONTWRITEBYTECODE=1
 
 #history control
 export HISTCONTROL=ignoredups
-shopt -s histverify
 
+shopt -s histverify # not sure
 shopt -s cdspell # let me spell poorly
+shopt -s direxpand  # dont escape vars during tab completion
+shopt -s histappend
 
 
 
 # colorize output unless piping to a file. dont look at object binaries
 # the line numbers mess up fzf history search. disable for now
 #export GREP_OPTIONS='--color=auto --exclude=\*\.o --exclude-dir=""/Users/apodell/data/.git" --exclude-dir="/Users/apodell/data/tags" -nr' # not this one
-export GREP_OPTIONS='--color=auto --binary-file=without-match --exclude-dir=\.pants\.d' # not this one
+alias grep='grep --color=auto --binary-file=without-match --exclude-dir=\.pants\.d --exclude="*.snap" --exclude-dir="dist"'
+
+#export GREP_OPTIONS='--color=auto --binary-file=without-match --exclude-dir=\.pants\.d --exclude="*.snap"' # not this one
+#export GREP_OPTIONS+='"--exclude-dir="dist" --exclude="*snap"'
 #alias sgrep="GREP_OPTIONS= grep"
 
 
@@ -164,9 +165,14 @@ mkcd() {
     cd "$*"
 }
 
+# TODO: conditionally accept a filetype and pass to the find command as * or *.[$filetype]
 sed_all() {
     # for mac, sed needs a backup file, for linux, it needs the -e i think? 
-    find ./ -type f -not -path './.git/*' -exec sed -i '' 's/'$1'/'$2'/g' {} \;
+    echo $1
+    echo $2
+    # add LANG so it doesnt blow up with utf-8 re issues
+    # if you need pipes - change the sed command to have a different delimiter
+    LANG=C find ./ -type f -name "*.jsx" -not -path './.git/*' -exec sed -i '' 's|'$1'|'$2'|g' {} \;
 }
 
 ######################
@@ -238,12 +244,11 @@ fvi() {
     # data repo should be defined as the root of where you will want to live
     #root=$(git_root)
     #echo ${root}
-    #vi $(find . $(git_root) -not -path ".pants*" | fzf-tmux --multi --cycle)
-    vi $(find . ${DATA_REPO} -not -path ".pants*" | fzf-tmux --multi --cycle)
+    vi $(find . ${DATA_REPO} -not -path ".pants*" | fzf --multi --cycle --height=40%)
+    #vi $(find . ${DATA_REPO} -not -path ".pants*" | fzf-tmux --multi --cycle)
 }
 # bind ctrl-f to fvi
 bind '"\C-f":"fvi"'
-
 
 
 # last 3 dirs of pwd
@@ -286,16 +291,6 @@ COLOR_RESET2='\e[0m'
 COLOR_RESET_MAC='\033[0;00m'
 
 
-
-# this requires the git-completion.sh script
-function parse_git_branch {
-    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-}
-
-function git_root() {
-    git rev-parse --show-toplevel
-}
-
  # Determine active Python virtualenv details.
 function set_virtualenv () {
     if test -z "$VIRTUAL_ENV" ; then
@@ -314,11 +309,6 @@ function prompt {
     #echo -e ${COLOR_GREEN2}${USER}'@'${HOSTNAME}${COLOR_RED2}`__git_ps1`${COLOR_YELLOW2}' '`pwdtail`'\a'${COLOR_RESET2}
 }
 PROMPT_COMMAND='prompt'
-
-
-# DISABLE BELL
-#set bell-style none 
-#xset -b # this one doesnt really work. not sure where its from
 
 
 # RUN TMUX AT STARTUP

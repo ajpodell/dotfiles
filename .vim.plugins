@@ -22,8 +22,63 @@ Plugin 'gmarik/Vundle.vim'
 " All Plugins
 
 " adam recs
-" ale - linters
+" linter
+Plugin 'dense-analysis/ale' 
+
+map <leader>ad :ALEDisableBuffer<cr>
+map <leader>ae :ALEEnableBuffer<cr>
+map <leader>an :ALENextWrap<cr>
+map <leader>ap :ALEPreviousWrap<cr>
+nmap <leader>af <Plug>(ale_fix)
+let g:ale_linters = {
+\   'javascript': ['flow', 'eslint', 'prettier']
+\}
+
+", 'importjs'],
+let g:ale_fixers = {
+\   'javascript': ['prettier', 'eslint'],
+\   'python': ['autopep8', 'isort'],
+\   'css': ['prettier', 'stylelint']
+\}
+" idk if i want this yet
+" let g:ale_fix_on_save = 1
+
+""'autopep8' - Fix PEP8 issues with autopep8.
+""'black' - Fix PEP8 issues with black.
+""'isort' - Sort Python imports with isort.
+""'reorder-python-imports' - Sort Python imports with reorder-python-imports.
+""'yapf' - Fix Python files with yapf.
+
+" possible linters for later
+" "'eslint' - Apply eslint --fix to a file.
+" "'fecs' - Apply fecs format to a file.
+" "'importjs' - automatic imports for javascript
+" "'prettier' - Apply prettier to a file.
+" "'prettier_eslint', 'prettier-eslint' - Apply prettier-eslint to a file.
+" "'prettier_standard', 'prettier-standard' - Apply prettier-standard to a file.
+" "'standard' - Fix JavaScript files using standard --fix
+" "'xo' - Fix JavaScript/TypeScript files using xo --fix.
+" "
+" "Try the following generic fixers:
+" "
+" "'remove_trailing_lines' - Remove all blank lines at the end of a file.
+" "'trim_whitespace' - Remove all trailing whitespace characters at the end of every line.
+
 " worp - project ale is under
+
+" tmux window
+" Plugin 'benmills/vimux'  " had issues
+" Plugin 'jgdavey/tslime'  " had issues
+Plugin 'esamattis/slimux'  " send command to tmux window"
+" test running -- now vim-test/vim-test
+Plugin 'janko-m/vim-test' 
+let test#javascript#jest#executable = 'npm test'
+" make test commands execute using dispatch.vim
+let test#strategy = "slimux"
+"let g:test#javascript#runner = 'NODE_PATH=$(pwd) NODE_ENV=testing jest'
+map <Leader>tt <CR> :TestNearest <CR>
+map <Leader>tf <CR> :TestFile <CR>
+
 
 
 " what does this do? 
@@ -61,8 +116,8 @@ function! FastFzf()
     " GitRoot?
     let l:git_root = GitRoot()
     echo l:git_root
-    call fzf#run({'source': 'fd . ' . l:git_root . ' --type f --hidden -E .git', 'sink': 'e'})
-    "call fzf#run({'source': 'fd . $DATA_REPO --type f --hidden -E .git', 'sink': 'e'})
+    call fzf#run({'source': 'fd . ' . l:git_root . ' --type f --hidden -E .git', 'sink': 'e'})  " my edits
+    "call fzf#run({'source': 'fd . $DATA_REPO --type f --hidden -E .git', 'sink': 'e'})          " from adam
 endfunc
 
 "noremap <Leader>f :call fzf#run({'source': 'fd . $DATA_REPO --type f --hidden -E .git', 'sink': 'e'})<CR>
@@ -72,6 +127,7 @@ noremap <Leader>f :call FastFzf()<CR>
 Plugin 'davidhalter/jedi-vim'
 let g:jedi#use_tabs_not_buffers = 1
 let g:jedi#popup_on_dot = 0  " maybe if i get more used to it, consider enabling this
+"let g:jedi#usages_command = "<leader>n"  " idk why this isn working
 autocmd FileType python setlocal completeopt-=preview  " dont show the docstring preview
 
 " TOLOOK AT
@@ -99,6 +155,8 @@ au BufNewFile,BufRead *.thrift setlocal filetype=thrift " this should be in the 
 " in your plugin constants configuration section
 let g:virtualenv_auto_activate = 1
 
+" Bins mapping for file switching. 
+Plugin 'shenbin04/vim-related'
 
 
 

@@ -62,3 +62,8 @@ $endif
 "jj": "\e"
 
 set bell-style none
+
+# use autocomplete with a single tab
+set show-all-if-ambiguous on
+# ignore case in autocomplete
+set completion-ignore-case on
