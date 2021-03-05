@@ -152,6 +152,16 @@ shopt -s histappend
 #export GREP_OPTIONS='--color=auto --exclude=\*\.o --exclude-dir=""/Users/apodell/data/.git" --exclude-dir="/Users/apodell/data/tags" -nr' # not this one
 alias grep='grep --color=auto --binary-file=without-match --exclude-dir=\.pants\.d --exclude="*.snap" --exclude-dir="dist"'
 
+grep_with_without() {
+    if (( $# != 3 )); then
+        echo "Usage: grep_with_without string_to_match string_to_exclude directory" 
+        return 1;
+    fi
+
+    # shellcheck disable=SC2046 
+    grep -Lr "$2" $(grep -lr "$1" "$3")
+}
+
 #export GREP_OPTIONS='--color=auto --binary-file=without-match --exclude-dir=\.pants\.d --exclude="*.snap"' # not this one
 #export GREP_OPTIONS+='"--exclude-dir="dist" --exclude="*snap"'
 #alias sgrep="GREP_OPTIONS= grep"

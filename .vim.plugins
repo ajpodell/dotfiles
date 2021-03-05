@@ -73,6 +73,7 @@ Plugin 'esamattis/slimux'  " send command to tmux window"
 " test running -- now vim-test/vim-test
 Plugin 'janko-m/vim-test' 
 let test#javascript#jest#executable = 'npm test'
+let test#python#pytest#executable = 'pytest -s'
 " make test commands execute using dispatch.vim
 let test#strategy = "slimux"
 "let g:test#javascript#runner = 'NODE_PATH=$(pwd) NODE_ENV=testing jest'
