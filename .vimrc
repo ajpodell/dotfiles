@@ -17,7 +17,9 @@ noremap Y y$
 " map leader key to \ properly
 let mapleader="\\"
 "set pastetoggle=<Leader>v " this doesnt really work right
+map <leader>pp :setlocal paste!<cr>
 "set path+=src,codegen,generated
+
 
 
 "clear highlighting after search
@@ -201,6 +203,7 @@ endfunc
 function! GitRoot()
     " git root is defined in git_scripts
     return trim(system('git root'))
+    " return system('git root')
 endfunc
 
 
