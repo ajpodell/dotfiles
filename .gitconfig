@@ -1,0 +1,11 @@
+[user]
+	name = Aaron Podell
+[alias]
+	checkoutr = checkout
+[core]
+	untrackedCache = true
+	fsmonitor = fsmonitor-watchman
+[pull]
+	rebase = true
+[diff]
+	colorMoved = zebra

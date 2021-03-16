@@ -19,4 +19,10 @@ if [ ! -f $HOME/.vimrc ]; then
     echo "source $DOTPATH/.bashrc" > $HOME/.vimrc
 fi
 
+# include the git config here
+echo -e "[include]\n\tpath = ~/dotfiles/.gitconfig" >> ~/.gitconfig
+
+
+# Do some git configuration
+
 # vim: ft=sh
