@@ -57,6 +57,11 @@ set shiftround " use multiples of shiftwidth when using < and >
 set cindent
 "set cinoptions=>1s "tab 1x shiftwidth on newline" -- maybe just if cpp? or disable in python?
 
+" stuff about buffer
+"
+nnoremap <Leader>b :ls<CR>:b<Space>
+" nnoremap <C-e> :set nomore <Bar> :ls <Bar> :set more <CR>:b<Space>
+
 " some utilities for closing
 nnoremap `` :q<CR> 
 nnoremap <leader>qa :bufdo bwipeout<CR> " close all buffers but dont close vim

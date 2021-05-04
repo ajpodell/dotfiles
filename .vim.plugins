@@ -100,7 +100,7 @@ let delimitMate_expand_space = 1
 
 " Plugin 'jnurmine/Zenburn' " this is a colorscheme to check out later
 
-" Plugin 'preservim/nerdtree'
+Plugin 'preservim/nerdtree'
 " nnoremap <Leader>e :NERDTree<cr>
 
 " Plugin 'jistr/vim-nerdtree-tabs' " still need to learn this. This isnt supported anymore

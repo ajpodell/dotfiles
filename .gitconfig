@@ -2,9 +2,9 @@
 	name = Aaron Podell
 [alias]
 	checkoutr = checkout
-[core]
-	untrackedCache = true
-	fsmonitor = fsmonitor-watchman
+# [core]
+# 	untrackedCache = true
+# 	fsmonitor = fsmonitor-watchman
 [pull]
 	rebase = true
 [diff]

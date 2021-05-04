@@ -121,7 +121,7 @@ optimize_git() {
 
     # or if you decided to not use this, you can unset the config
     # git config --unset core.fsmonitor
-    # git config --global --unset core.fsmonitor fsmonitor-watchman
+    # git config --global --unset core.fsmonitor
 
     # download the script
     curl https://raw.githubusercontent.com/git/git/master/templates/hooks--fsmonitor-watchman.sample -o /usr/local/bin/fsmonitor-watchman
@@ -136,7 +136,7 @@ optimize_git() {
 
     # or if you decided to not use this, you can unset the config
     # git config --unset core.untrackedCache
-    # git config --global core.untrackedCache true
+    # git config --global core.untrackedCache false
 }
 
 
