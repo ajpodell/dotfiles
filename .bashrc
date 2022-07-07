@@ -1,9 +1,16 @@
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # Added by Aaron Podell
+# SETUP #
+# 1. clone into your home directory.
+# 2. add the following line to your bashrc
+# source $HOME/dotfiles/.bashrc
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-export DOTPATH="/Users/$(whoami)/dotfiles"
+
+# export DOTPATH="/Users/$(whoami)/dotfiles"
+# export DOTPATH="/home/$(whoami)/dotfiles"
+export DOTPATH=$HOME/dotfiles
 export INPUTRC=$DOTPATH/.inputrc
 alias dot="cd $DOTPATH"
 
@@ -35,12 +42,12 @@ esac
 alias brc="vim ~/dotfiles/.bashrc"
 
 # some env variables
-export EDITOR="vim"
+export EDITOR="nvim"
 
 #some basics
 alias rless="less -r"
-alias vim="vim -p"
-alias vi="vim -p"
+alias vim="nvim -p"
+alias vi="nvim -p"
 
 # this doesnt work, or really make sense
 #alias vi="vim -p -c 'execute \"normal \".get(g:,\"mapleader\",\"\\\").\"f\"'"
@@ -84,9 +91,14 @@ gfr() {
     git rebase $1/$2;
 }
 # Source bash_completion script. Make sure to run "brew install bash-completion@2" on new machines
-if [ -f $(brew --prefix)/etc/bash_completion  ]; then
-    . $(brew --prefix)/etc/bash_completion
+# TODO: need to modify this for machines which dont have brew
+if command -v brew &> /dev/null
+then
+    if [ -f $(brew --prefix)/etc/bash_completion  ]; then
+        . $(brew --prefix)/etc/bash_completion
+    fi
 fi
+
 export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
@@ -151,7 +163,7 @@ alias delobj="find . -type f -name '*.[d,o]' -delete;"
 
 # fix weirdness in bash
 alias fix_wrap="kill -WINCH $$"  # this will kill the weird line breaks that happens sometimes
-fix_wrap
+# fix_wrap
 
 stty sane  # intended to fix the screen no longer showing typed chars
 
@@ -381,8 +393,12 @@ fix_virtualenv() {
 ############################## TMUX###############################
 ##################################################################
 # RUN TMUX AT STARTUP
-if [[ ! $TERM =~ screen-256color ]]; then
-    tmux attach || tmux
+# but only if were on a system where tmux is supported
+if command -v tmux &> /dev/null
+then
+    if [[ ! $TERM =~ screen-256color ]]; then
+        tmux attach || tmux
+    fi
 fi
 
 do_layout() {
