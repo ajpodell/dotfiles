@@ -240,7 +240,7 @@ set modeline
 set modelines=5
 
 " useful functions
-inoremap <Leader>p import ipdb; ipdb.set_trace()
+inoremap <Leader>p import pdb; pdb.set_trace()
 nnoremap <Leader>w :%s/\s\+$//e<cr>  " clean trailing whitespace for the file
 nnoremap  <Leader>s :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
 
