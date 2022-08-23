@@ -1,14 +1,15 @@
-# a basic setup script for starting up a new mac
+# a basic setup script for starting up a new computer 
 
+# TODO: make this optional, since want to have linux or mac compatible
 # install homebrew
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"/
+# /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"/
 
-# install vundle
-git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim;
 
 # TODO: add a thing if dotpath doesnt exit - bail now. echo you gotta source the bashrc
 
-# create top-level files
+# create top-level files --- TODO these should be more like an append. and ideally it would take in the appropriate file, since bashrc or bash_profile or .bashrc.user could be used
+# NOTE
+# inputrc is handled by a path variable in the bashrc
 if [ ! -f $HOME/.tmux.conf ]; then
     echo "source-file $DOTPATH/.tmux.conf" > $HOME/.tmux.conf
 fi
@@ -16,8 +17,28 @@ if [ ! -f $HOME/.bash_profile ]; then
     echo "source $DOTPATH/.bashrc" > $HOME/.bash_profile
 fi
 if [ ! -f $HOME/.vimrc ]; then
-    echo "source $DOTPATH/.bashrc" > $HOME/.vimrc
+    echo "source $DOTPATH/.vimrc" > $HOME/.vimrc
 fi
+# for using neovim
+# create a file:
+# ~/.config/nvim/init.vim (that will be like your .vimrc, you’ll paste all your custom config at this file)
+
+#that file should have the following to just leave .vimrc as config
+
+# set runtimepath^=~/.vim runtimepath+=~/.vim/after
+# let &packpath = &runtimepath
+# source ~/.vimrc
+
+
+# Setting up Vim
+# install vundle (maybe one day switch to vim plug)
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim;
+
+# go to  ~/dotfiles/.vim.plugins and :PluginInstall
+
+
+
+
 
 # include the git config here
 echo -e "[include]\n\tpath = ~/dotfiles/.gitconfig" >> ~/.gitconfig
