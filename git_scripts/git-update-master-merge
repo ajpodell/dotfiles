@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+git fetch origin master:master && git merge master
+
+# vim: ft=sh

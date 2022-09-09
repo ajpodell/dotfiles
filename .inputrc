@@ -51,14 +51,22 @@ $if mode=vi
     "G": end-of-history
     # these are for vi-command mode
     #Control-l: clear-screen
-    "C-l": clear-screen
+    "\C-l": clear-screen
     set keymap vi-insert
     "jj": vi-movement-mode
     # these are for vi-insert mode
     Control-l: "clear\r"
+    # "C-l": "clear\r"
+    # "^L": "clear\r"
 $endif
+"\C-l": clear
 
 # some ports from vimrc for vi mode
 "jj": "\e"
 
 set bell-style none
+
+# use autocomplete with a single tab
+set show-all-if-ambiguous on
+# ignore case in autocomplete
+set completion-ignore-case on

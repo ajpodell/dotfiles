@@ -9,6 +9,8 @@ filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
+filetype plugin indent on    " required
+
 call vundle#begin()
 
 " alternatively, pass a path where Vundle should install plugins
@@ -25,6 +27,71 @@ Plugin 'gmarik/Vundle.vim'
 
 " All Plugins
 
+" adam recs
+" linter
+Plugin 'dense-analysis/ale' 
+
+map <leader>ad :ALEDisableBuffer<cr>
+map <leader>ae :ALEEnableBuffer<cr>
+map <leader>an :ALENextWrap<cr>
+map <leader>ap :ALEPreviousWrap<cr>
+nmap <leader>af <Plug>(ale_fix)
+let g:ale_linters = {
+\   'javascript': ['flow', 'eslint', 'prettier']
+\}
+
+", 'importjs'],
+let g:ale_fixers = {
+\   'javascript': ['prettier', 'eslint'],
+\   'python': ['autopep8', 'isort'],
+\   'css': ['prettier', 'stylelint']
+\}
+" idk if i want this yet
+" let g:ale_fix_on_save = 1
+
+""'autopep8' - Fix PEP8 issues with autopep8.
+""'black' - Fix PEP8 issues with black.
+""'isort' - Sort Python imports with isort.
+""'reorder-python-imports' - Sort Python imports with reorder-python-imports.
+""'yapf' - Fix Python files with yapf.
+
+" possible linters for later
+" "'eslint' - Apply eslint --fix to a file.
+" "'fecs' - Apply fecs format to a file.
+" "'importjs' - automatic imports for javascript
+" "'prettier' - Apply prettier to a file.
+" "'prettier_eslint', 'prettier-eslint' - Apply prettier-eslint to a file.
+" "'prettier_standard', 'prettier-standard' - Apply prettier-standard to a file.
+" "'standard' - Fix JavaScript files using standard --fix
+" "'xo' - Fix JavaScript/TypeScript files using xo --fix.
+" "
+" "Try the following generic fixers:
+" "
+" "'remove_trailing_lines' - Remove all blank lines at the end of a file.
+" "'trim_whitespace' - Remove all trailing whitespace characters at the end of every line.
+
+" worp - project ale is under
+
+" tmux window
+" Plugin 'benmills/vimux'  " had issues
+" Plugin 'jgdavey/tslime'  " had issues
+Plugin 'esamattis/slimux'  " send command to tmux window"
+" test running -- now vim-test/vim-test
+Plugin 'janko-m/vim-test' 
+let test#javascript#jest#executable = 'npm test'
+let test#python#runner = 'pytest'
+let test#python#pytest#executable = 'pytest -s'
+" make test commands execute using dispatch.vim
+" slimux"
+" let test#strategy = "neovim" 
+let test#strategy = "slimux" 
+let test#python#file_pattern = '*_test.py'
+"let g:test#javascript#runner = 'NODE_PATH=$(pwd) NODE_ENV=testing jest'
+map <Leader>tt <CR> :TestNearest <CR>
+map <Leader>tf <CR> :TestFile <CR>
+
+
+
 " what does this do? 
 " Plugin 'tmhedberg/SimpylFold'
 
@@ -33,17 +100,51 @@ Plugin 'gmarik/Vundle.vim'
 " Plugin 'valloric/youcompleteme'
 
 " Plugin 'nvie/vim-flake8'
+
+" DelimitMate
 Plugin 'Raimondi/delimitMate'
+let delimitMate_expand_cr = 1
+let delimitMate_expand_space = 1
+
 " Plugin 'craigemery/vim-autotag'
 
 " Plugin 'jnurmine/Zenburn' " this is a colorscheme to check out later
 
-" Plugin 'jistr/vim-nerdtree-tabs' " still need to learn this
+Plugin 'preservim/nerdtree'
+" nnoremap <Leader>e :NERDTree<cr>
+
+" Plugin 'jistr/vim-nerdtree-tabs' " still need to learn this. This isnt supported anymore
 
 Plugin 'jmcantrell/vim-virtualenv'
 
 " fuzzy finding
 Plugin 'junegunn/fzf'
+set rtp+=/usr/local/opt/fzf
+"noremap <Leader>f :FZF $DATA_REPO --sink=e<cr> " moved this to .vim.plugin
+
+function! FastFzf()
+    " TODO: if not in a git root, just use current dir (maybe that belongs in
+    " GitRoot?
+    let l:git_root = GitRoot()
+    echo l:git_root
+    call fzf#run({'source': 'fd . ' . l:git_root . ' --type f --hidden -E .git', 'sink': 'e'})  " my edits
+    "call fzf#run({'source': 'fd . $DATA_REPO --type f --hidden -E .git', 'sink': 'e'})          " from adam
+endfunc
+
+"noremap <Leader>f :call fzf#run({'source': 'fd . $DATA_REPO --type f --hidden -E .git', 'sink': 'e'})<CR>
+noremap <Leader>f :call FastFzf()<CR>
+
+" better autocomplete and function defs
+Plugin 'davidhalter/jedi-vim'
+let g:jedi#use_tabs_not_buffers = 1
+let g:jedi#popup_on_dot = 0  " maybe if i get more used to it, consider enabling this
+"let g:jedi#usages_command = "<leader>n"  " idk why this isn working
+autocmd FileType python setlocal completeopt-=preview  " dont show the docstring preview
+
+" TOLOOK AT
+" supertab
+" deoplete-plugins/deoplete-jedi
+
 
 "git blame and another git fun i havent learned yet
 Plugin 'tpope/vim-fugitive' 
@@ -54,10 +155,9 @@ Plugin 'tpope/vim-fugitive'
 "let g:airline#extensions#tabline#fnamemod = ':t'
 
 
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+" syntax highlighting for thrift
+Bundle 'solarnz/thrift.vim'
+au BufNewFile,BufRead *.thrift setlocal filetype=thrift " this should be in the package, but isnt working"
 
 
 "nerdtree
@@ -66,14 +166,9 @@ filetype plugin indent on    " required
 " in your plugin constants configuration section
 let g:virtualenv_auto_activate = 1
 
+" Bins mapping for file switching. 
+Plugin 'shenbin04/vim-related'
 
-" DelimitMate
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
-
-
-" fzf
-set rtp+=/usr/local/opt/fzf
 
 
 " ----- YouCompleteMe ----- "
@@ -119,6 +214,7 @@ set rtp+=/usr/local/opt/fzf
 " \ -I/bb/build/Linux-x86_64-32/release/robolibs/prod/lib/dpkgroot/opt/bb/include/stlport
 " \'
 
-
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
 
 " vim: ft=vim
