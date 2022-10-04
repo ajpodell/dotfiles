@@ -10,4 +10,9 @@ alias ls="ls --color=auto"  # this breaks on mac for some reason
 
 shopt -s globstar # for use with jd function, not really sure what this does
 
+# this may be replicated in inputrc. maybe is different between linux and mac?
+bind -x '"\C-l": clear'
+
+
+
 # vim: set filetype=sh:

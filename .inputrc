@@ -51,15 +51,15 @@ $if mode=vi
     "G": end-of-history
     # these are for vi-command mode
     #Control-l: clear-screen
-    "\C-l": clear-screen
+    # "\C-l": clear-screen
     set keymap vi-insert
     "jj": vi-movement-mode
     # these are for vi-insert mode
-    Control-l: "clear\r"
-    # "C-l": "clear\r"
+    # Control-l: "clear\r"
+    # "C-l": "clear"
     # "^L": "clear\r"
 $endif
-"\C-l": clear
+#"\C-l": clear
 
 # some ports from vimrc for vi mode
 "jj": "\e"
