@@ -216,7 +216,7 @@ export HISTCONTROL=ignoredups
 
 shopt -s histverify # not sure
 shopt -s cdspell # let me spell poorly
-shopt -s direxpand  # dont escape vars during tab completion
+# shopt -s direxpand  # dont escape vars during tab completion. sep 2022 - this seems to be no longer existent
 shopt -s histappend
 
 

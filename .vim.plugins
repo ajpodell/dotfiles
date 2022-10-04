@@ -19,6 +19,12 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 
+
+" some jsx stuff - gotta look into this one - but should do jsx indenting
+" Plug 'yuezk/vim-js'
+" Plug 'maxmellon/vim-jsx-pretty'}
+
+
 " All Plugins
 
 " adam recs

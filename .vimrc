@@ -29,6 +29,20 @@ noremap C-[ <nop>
 noremap C-] <nop>
 "cnoremap sh bash  "sh !sh bash
 
+function! ToggleNums()
+    if &number
+        set nu!
+    else
+        set nu
+    endif
+
+    if &relativenumber
+        set relativenumber!
+    else
+        set relativenumber
+    endif
+endfunc
+nnoremap <Leader>nn :call ToggleNums()<CR>
 
 "set autochdir " change to current directory within vim when opening a file
 cnoremap cdf cd %:h   " use cdf to move to current directory.
@@ -109,7 +123,8 @@ set laststatus=2
 set cf  " something about error files"
 "set isk+=_,$,@,%,#, " these are not word separators
 set ruler " show row, column
-set diffopt+=iwhite
+set lazyredraw " do not redraw during macros
+" set diffopt+=iwhite  " what does this do?
 set wildmenu "allow tabbing to autocomplete
 set wildmode=list:longest
 " set hidden
