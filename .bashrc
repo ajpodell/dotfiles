@@ -109,8 +109,8 @@ alias gca="git commit -am "
 alias gpoh="git push origin HEAD"
 alias gpfoh="git push --force origin HEAD"
 alias gpum="git pull upstream master"
-alias gpom="git pull origin master"
-alias gdom="git diff origin/master"
+alias gpom="git pull origin main"  # gotta make this work with main and master
+alias gdom="git diff origin/main"
 alias gco='git checkout'
 alias gc='git checkout `FZF_DEFAULT_COMMAND="git branch" fzf`'
 # bring autocomplete to g alias
@@ -149,8 +149,11 @@ _git_changed_files() {
     COMPREPLY=( "${tmp[@]// /\ }" )
 }
 
-
 # this requires the git-completion.sh script
+if [ -f ~/.git-completion.bash ]; then
+  . ~/.git-completion.bash
+fi
+
 function parse_git_branch {
     git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }

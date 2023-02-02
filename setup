@@ -3,15 +3,28 @@
 # a basic setup script for starting up a new mac
 
 # TODO: make this optional, since want to have linux or mac compatible
+
+# -- all of this should be mac only --
+
 echo "looking for homebrew"
 which -s brew
 if [[ $? != 0  ]] ; then
     echo "installing homebrew";
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 else
-    echo "updating homebrew"    
+    echo "updating homebrew"
     brew update
 fi
+
+echo "instaling git-completion script"
+curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
+
+
+
+# install xcode command line tools if not installed
+# xcode-select --install
+
+# ------ END MAC STUFF ------
 
 # install vundle
 echo "looking for vundle";
@@ -45,6 +58,10 @@ fi
 # for using neovim
 # create a file:
 # ~/.config/nvim/init.vim (that will be like your .vimrc, you’ll paste all your custom config at this file)
+if [ ! f $HOME/.config/nvim/init.vim ]; then
+    mkdir -p $HOME/.config/nvim && touch $HOME/.config/nvim/init.vim
+    echo "set runtimepath^=~/.vim runtimepath+=~/.vim/after\nlet &packpath = &runtimepath\nsource ~/.vimrc"
+fi
 
 #that file should have the following to just leave .vimrc as config
 
