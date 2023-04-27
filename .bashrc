@@ -1,4 +1,5 @@
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# echo "my bash" # last
 
 # Added by Aaron Podell
 # SETUP #
@@ -43,8 +44,7 @@ COLOR_RESET2='\e[0m'
 COLOR_RESET_MAC='\033[0;00m'
 
 
-# export DOTPATH="/Users/$(whoami)/dotfiles"
-# export DOTPATH="/home/$(whoami)/dotfiles"
+# these 2 definitions should be in the root bash profile
 export DOTPATH=$HOME/dotfiles
 export INPUTRC=$DOTPATH/.inputrc
 alias dot="cd $DOTPATH"

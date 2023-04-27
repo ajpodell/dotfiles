@@ -8,7 +8,7 @@ set relativenumber "if things get slow, try toggling this
 set noswapfile  " no backup files
 
 
-" allow some commands to take over when in insert mode 
+" allow some commands to take over when in insert mode
 inoremap :w <ESC>:w
 inoremap <C-w> <ESC><C-w>
 
@@ -77,7 +77,7 @@ nnoremap <Leader>b :ls<CR>:b<Space>
 " nnoremap <C-e> :set nomore <Bar> :ls <Bar> :set more <CR>:b<Space>
 
 " some utilities for closing
-nnoremap `` :q<CR> 
+nnoremap `` :q<CR>
 nnoremap <leader>qa :bufdo bwipeout<CR> " close all buffers but dont close vim
 
 set showmatch " show matching parens
@@ -168,7 +168,7 @@ set wildcharm=<C-z>
 nnoremap <C-t> :tabnew<cr>:call FastFzf()<CR>
 nnoremap <C-e> :tabnew %:h<C-z>
 nnoremap <leader>ee :e %:h<C-z>
-nnoremap <leader>et :tabe 
+nnoremap <leader>et :tabe
 :nmap<C-j> :tabprevious<cr>
 :nmap<C-k> :tabnext<cr>
 
@@ -184,7 +184,7 @@ imap <C-e> <ESC>:tabnew %:h<C-z>
 set complete-=t
 "":noremap <Leader>t <C-t>
 " open tag in a new tab
-" map <Leader>t :tab split<CR>:exec("tag ".expand("<cword>"))<CR> 
+" map <Leader>t :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 " set tags=tags;$HOME
 " set complete-=i "dont search all included files
@@ -210,14 +210,38 @@ set encoding=utf-8
 cnoremap vr vertical resize
 
 " cool function to create a url w/ respect to a file. More of an exercise since created around a specific url. It also doesnt work sometimes, but idk when
-" todo: split out getting the file_path
-function! GetUrl(base_url)
-    "let l:current_file=expand('%:t') " use this when you just want the 
-    let l:current_file=expand('%:.') " 
-    let l:file_path = trim(system('git ls-files --full-name ' . l:current_file))
+" todo: split out getting the file_path -- the commented code only worked if you were operating within the repo. This should work regardless of where you start from, even from a different repo
+function! GetStashUrl(base_url)
+    "let l:current_file=expand('%:t') " use this when you just want the
+    " let l:current_dir = getcwd()
+    " echo l:current_dir
+    " this is relative path of current file
+    " let l:current_file=expand('%:.')
+    " this should be just the fielname
+    let l:current_file=expand('%:t')
+    " echo 'current file ' . l:current_file
+    let file_dir = expand('%:h')
+    "echo file_dir
+    " this version works
+    let l:git_relative_file_path = trim(system('cd ' . file_dir . '; ' .'git ls-files --full-name ' . l:current_file))
+    " echo 'git rel path: ' . l:git_relative_file_path
+
+    " try using --git-dir
+    " this assumes that its unix ('/') and also that the git dir is in a top level .git directory
+    " let l:git_dir_flag = '--git-dir=' . file_dir . '/.git'
+    " echo l:git_dir_flag
+    " let l:git_relative_file_path = trim(system('git ' . l:git_dir_flag . ' ls-files --full-name ' . l:current_file))
+    " echo l:git_relative_file_path
+    " figure out what repo youre in
+    " let git_root = system('cd ' . file_dir . '; git rev-parse --show-toplevel | tr -d "\n"')
+
+    " this one cant use the git path option since it will just end up returning the directory youre in
+    let l:git_repo = trim(system('cd ' . file_dir . '; ' . 'basename `git rev-parse --show-toplevel`'))
     let l:line = line('.')
-    let l:url = a:base_url . l:file_path . '#' . l:line
+    let l:url = a:base_url . l:git_repo . '/browse/' . l:git_relative_file_path . '#' . l:line
     echo l:url
+    " let l:current_dir = getcwd()
+    " echo l:current_dir
 endfunc
 
 function! GitRoot()
@@ -311,6 +335,6 @@ set tabline=%!MyTabLine()
 
 " this is the default statuline (ish) - taken from stackoverflow
 " statusline=%f\ %h%w%m%r%=%-14.(%l,%c%V%)\ %P
-" set statusline=%F%h%m  
+" set statusline=%F%h%m
 set statusline=%F%h%m\ %h%w%m%r%=%-14.(%l,%c%V%)\ %P " show full path in status bar, help buffer, then modfiied"
 " end tab stuff
