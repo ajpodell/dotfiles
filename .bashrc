@@ -255,11 +255,14 @@ mkcd() {
 # TODO: conditionally accept a filetype and pass to the find command as * or *.[$filetype]
 sed_all() {
     # for mac, sed needs a backup file, for linux, it needs the -e i think? 
-    echo $1
-    echo $2
+    # echo $1
+    # echo $2
     # add LANG so it doesnt blow up with utf-8 re issues
     # if you need pipes - change the sed command to have a different delimiter
-    LANG=C find ./ -type f -name "*.jsx" -not -path './.git/*' -exec sed -i '' 's|'$1'|'$2'|g' {} \;
+    # i htink this version is for mac
+    # LANG=C find ./ -type f -name "*.yaml" -not -path './.git/*' -exec sed -i '' 's|'$1'|'$2'|g' {} \;
+    # and this version is for linux (no -i ''), but not 100%. then the file type is a restriction
+    find ./ -type f -name "*.yaml" -not -path './.git/*' -exec sed -i 's|'$1'|'$2'|g' {} \;
 }
 
 ######################
