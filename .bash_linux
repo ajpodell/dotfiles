@@ -11,7 +11,9 @@ alias ls="ls --color=auto"  # this breaks on mac for some reason
 shopt -s globstar # for use with jd function, not really sure what this does
 
 # this may be replicated in inputrc. maybe is different between linux and mac?
-bind -x '"\C-l": clear'
+if [[ $TERM =~ screen-256color ]]; then
+    bind -x '"\C-l": clear'
+fi;
 
 
 

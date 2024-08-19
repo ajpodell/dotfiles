@@ -101,10 +101,17 @@ map <Leader>tf <CR> :TestFile <CR>
 
 " Plugin 'nvie/vim-flake8'
 
+
+" ##### surrounds ##### "
+Plugin 'tpope/vim-surround'
+
 " DelimitMate
-Plugin 'Raimondi/delimitMate'
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
+" I think its time to move on from this and go to vim surround
+" Plugin 'Raimondi/delimitMate'
+" let delimitMate_expand_cr = 1
+" let delimitMate_expand_space = 1
+
+" ##### end surrounds ##### "
 
 " Plugin 'craigemery/vim-autotag'
 
@@ -115,10 +122,14 @@ Plugin 'preservim/nerdtree'
 
 " Plugin 'jistr/vim-nerdtree-tabs' " still need to learn this. This isnt supported anymore
 
-Plugin 'jmcantrell/vim-virtualenv'
+" this is giving an issue since vim is using python3.6 and this needs 3.7
+" Plugin 'jmcantrell/vim-virtualenv'
 
-" fuzzy finding
+" Fuzzy Finding - FZF
+" there is the default fzf plugin, and then some niceties in fzf.vim as a separate plugin
+" https://github.com/junegunn/fzf/blob/master/README-VIM.md
 Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf.vim'
 set rtp+=/usr/local/opt/fzf
 "noremap <Leader>f :FZF $DATA_REPO --sink=e<cr> " moved this to .vim.plugin
 
@@ -128,11 +139,18 @@ function! FastFzf()
     let l:git_root = GitRoot()
     echo l:git_root
     call fzf#run({'source': 'fd . ' . l:git_root . ' --type f --hidden -E .git', 'sink': 'e'})  " my edits
-    "call fzf#run({'source': 'fd . $DATA_REPO --type f --hidden -E .git', 'sink': 'e'})          " from adam
 endfunc
 
-"noremap <Leader>f :call fzf#run({'source': 'fd . $DATA_REPO --type f --hidden -E .git', 'sink': 'e'})<CR>
+" noremap <Leader>f :call fzf#run({'source': 'fd . $DATA_REPO --type f --hidden -E .git', 'sink': 'e'})<CR>
 noremap <Leader>f :call FastFzf()<CR>
+nnoremap <Leader>b :Buffers<CR>
+
+" initialize fzf config and set some defaults
+let g:fzf_vim = {}
+let g:fzf_vim.buffers_jump = 1
+
+
+""""""" END FZF """"""""""""'"
 
 " better autocomplete and function defs
 Plugin 'davidhalter/jedi-vim'

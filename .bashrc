@@ -1,5 +1,6 @@
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# echo "my bash" # last
+# this gets called last, and from wherever i link it
+# echo "my bashrc" # last
 
 # Added by Aaron Podell
 # SETUP #
@@ -14,14 +15,15 @@
 ##################################################################
 # RUN TMUX AT STARTUP
 # but only if were on a system where tmux is supported
-if command -v tmux &> /dev/null
-then
+if command -v tmux &> /dev/null; then
     if [[ ! $TERM =~ screen-256color ]]; then
-        tmux attach || tmux
+        echo "not starting yet"
+        # tmux attach || tmux
     fi
 fi
 
 # color constants
+# i think di means "directory" and is for the ls colors??
 COLOR_RED='\[\e[31m\]'
 COLOR_RED2='\e[31m'
 COLOR_RED_MAC='\033[0;31m'
@@ -76,13 +78,11 @@ esac
 # NOTE: always clone the dotfiles repo into $HOME/dotfiles
 alias brc="vim ~/dotfiles/.bashrc"
 
-# some env variables
-export EDITOR="nvim"
-
-#some basics
+# setup vim - if using neovim change editor to nvim
+export EDITOR="nvim" 
+alias vim="$EDITOR -p"
+alias vi="$EDITOR -p"
 alias rless="less -r"
-alias vim="nvim -p"
-alias vi="nvim -p"
 
 # this doesnt work, or really make sense
 #alias vi="vim -p -c 'execute \"normal \".get(g:,\"mapleader\",\"\\\").\"f\"'"

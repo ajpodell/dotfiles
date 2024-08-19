@@ -72,8 +72,11 @@ set cindent
 "set cinoptions=>1s "tab 1x shiftwidth on newline" -- maybe just if cpp? or disable in python?
 
 " stuff about buffer
-"
-nnoremap <Leader>b :ls<CR>:b<Space>
+" this version calls for a buffer list then prompts for a nubmer input.
+" nnoremap <Leader>b :ls<CR>:b<Space>
+" this version attempts to replace it with an fzf version
+
+" i dont know what this is
 " nnoremap <C-e> :set nomore <Bar> :ls <Bar> :set more <CR>:b<Space>
 
 " some utilities for closing
@@ -238,9 +241,17 @@ function! GetStashUrl(base_url)
     " this one cant use the git path option since it will just end up returning the directory youre in
     let l:git_repo = trim(system('cd ' . file_dir . '; ' . 'basename `git rev-parse --show-toplevel`'))
     let l:line = line('.')
-    let l:url = a:base_url . l:git_repo . '/browse/' . l:git_relative_file_path . '#' . l:line
+    let l:url = trim(a:base_url . l:git_repo . '/browse/' . l:git_relative_file_path . '#' . l:line)
     echo l:url
+
+    " this part will only work if pbcopy is set up
+    " this has an interesting idea for moving bash aliases into another file, and then enabling them from within vim
+    " https://stackoverflow.com/questions/4642822/how-to-make-bashrc-aliases-available-within-a-vim-shell-command
+    " call system( 'echo "' . l:url . '" | pbcopy') 
+    " "echo -n" will prevent the newline from getting added
+    call system( 'echo -n "' . l:url . '" |  ssh -l $USER host.docker.internal pbcopy --')
     " let l:current_dir = getcwd()
+
     " echo l:current_dir
 endfunc
 

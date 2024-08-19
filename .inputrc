@@ -70,3 +70,6 @@ set bell-style none
 set show-all-if-ambiguous on
 # ignore case in autocomplete
 set completion-ignore-case on
+
+# include another inputrc file
+#$include /etc/inputrc
