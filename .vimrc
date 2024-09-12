@@ -241,7 +241,10 @@ function! GetStashUrl(base_url)
     " this one cant use the git path option since it will just end up returning the directory youre in
     let l:git_repo = trim(system('cd ' . file_dir . '; ' . 'basename `git rev-parse --show-toplevel`'))
     let l:line = line('.')
-    let l:url = trim(a:base_url . l:git_repo . '/browse/' . l:git_relative_file_path . '#' . l:line)
+    " for stash
+    " let l:url = trim(a:base_url . l:git_repo . '/browse/' . l:git_relative_file_path . '#' . l:line)
+    " for git
+    let l:url = trim(a:base_url . l:git_repo . '/blob/master/' . l:git_relative_file_path . '#L'.l:line)
     echo l:url
 
     " this part will only work if pbcopy is set up

@@ -36,16 +36,26 @@ map <leader>ae :ALEEnableBuffer<cr>
 map <leader>an :ALENextWrap<cr>
 map <leader>ap :ALEPreviousWrap<cr>
 nmap <leader>af <Plug>(ale_fix)
+" probably want some form of pylint, but its being annoying right now
 let g:ale_linters = {
-\   'javascript': ['flow', 'eslint', 'prettier']
+\   'javascript': ['flow', 'eslint', 'prettier'],
+\   'python': ['pylint']
 \}
 
 ", 'importjs'],
+" \   'python': ['autopep8', 'isort'],
 let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \   'javascript': ['prettier', 'eslint'],
-\   'python': ['autopep8', 'isort'],
+\   'python': ['black'],
 \   'css': ['prettier', 'stylelint']
 \}
+let g:ale_echo_msg_format = '%linter% says: %s'
+" try to get pylint working with global
+" let g:ale_python_pylint_options = '--rcfile pylintrc'
+" let g:ale_python_pylint_options = '--rcfile ~/data/pylintrc'
+let g:ale_python_auto_virtualenv=1
+let g:ale_python_pylint_use_global=1
 " idk if i want this yet
 " let g:ale_fix_on_save = 1
 
@@ -154,7 +164,7 @@ let g:fzf_vim.buffers_jump = 1
 
 " better autocomplete and function defs
 Plugin 'davidhalter/jedi-vim'
-let g:jedi#use_tabs_not_buffers = 1
+let g:jedi#use_tabs_not_buffers = 0
 let g:jedi#popup_on_dot = 0  " maybe if i get more used to it, consider enabling this
 "let g:jedi#usages_command = "<leader>n"  " idk why this isn working
 autocmd FileType python setlocal completeopt-=preview  " dont show the docstring preview

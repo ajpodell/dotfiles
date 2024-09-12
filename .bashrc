@@ -255,14 +255,17 @@ mkcd() {
 # TODO: conditionally accept a filetype and pass to the find command as * or *.[$filetype]
 sed_all() {
     # for mac, sed needs a backup file, for linux, it needs the -e i think? 
-    # echo $1
-    # echo $2
+    echo $1
+    echo $2
     # add LANG so it doesnt blow up with utf-8 re issues
     # if you need pipes - change the sed command to have a different delimiter
     # i htink this version is for mac
     # LANG=C find ./ -type f -name "*.yaml" -not -path './.git/*' -exec sed -i '' 's|'$1'|'$2'|g' {} \;
-    # and this version is for linux (no -i ''), but not 100%. then the file type is a restriction
-    find ./ -type f -name "*.yaml" -not -path './.git/*' -exec sed -i 's|'$1'|'$2'|g' {} \;
+    # and this version is for linux (no '' after the -i), but not 100%. then the file type is a restriction
+    # find ./ -type f -name "*.py" -not -path './.git/*' -exec sed -i 's|"$1"|"$2"|g' {} \;
+    # this version just takes in the full sed command. its a little easier to do it that way so you have more clarity on whats happening.
+    # example: sed_all 's|arrow\(.*\)\.timestamp|arrow\1\.int_timestamp|g'
+    find ./ -type f -name "*.py" -not -path './.git/*' -exec sed -i "$1" {} \;
 }
 
 ######################
@@ -325,6 +328,19 @@ watch_make() {
         echo "starting..." ;
         find_src | entr -d -s "make $1 ;
         printf \"${iterm2_mark}done.....\"" ; done
+}
+
+# loop tests until failure
+test_until_fail() {
+    # this technically will just run whatever, but its designed to be called with a pytest command. Example:
+    # > test_until_fail pytest path/to/test
+    echo "$@"
+
+    while [[ "$?" == "0" ]]; do \
+    # just do whatever command 
+        echo "running tests"
+        $@
+    done
 }
 
 
