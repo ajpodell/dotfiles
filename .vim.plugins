@@ -29,7 +29,7 @@ Plugin 'gmarik/Vundle.vim'
 
 " adam recs
 " linter
-Plugin 'dense-analysis/ale' 
+Plugin 'dense-analysis/ale'
 
 map <leader>ad :ALEDisableBuffer<cr>
 map <leader>ae :ALEEnableBuffer<cr>
@@ -57,7 +57,7 @@ let g:ale_echo_msg_format = '%linter% says: %s'
 let g:ale_python_auto_virtualenv=1
 let g:ale_python_pylint_use_global=1
 " idk if i want this yet
-" let g:ale_fix_on_save = 1
+let g:ale_fix_on_save = 1
 
 ""'autopep8' - Fix PEP8 issues with autopep8.
 ""'black' - Fix PEP8 issues with black.
@@ -87,14 +87,14 @@ let g:ale_python_pylint_use_global=1
 " Plugin 'jgdavey/tslime'  " had issues
 Plugin 'esamattis/slimux'  " send command to tmux window"
 " test running -- now vim-test/vim-test
-Plugin 'janko-m/vim-test' 
+Plugin 'janko-m/vim-test'
 let test#javascript#jest#executable = 'npm test'
 let test#python#runner = 'pytest'
 let test#python#pytest#executable = 'pytest -s'
 " make test commands execute using dispatch.vim
 " slimux"
-" let test#strategy = "neovim" 
-let test#strategy = "slimux" 
+" let test#strategy = "neovim"
+let test#strategy = "slimux"
 let test#python#file_pattern = '*_test.py'
 "let g:test#javascript#runner = 'NODE_PATH=$(pwd) NODE_ENV=testing jest'
 map <Leader>tt <CR> :TestNearest <CR>
@@ -102,7 +102,7 @@ map <Leader>tf <CR> :TestFile <CR>
 
 
 
-" what does this do? 
+" what does this do?
 " Plugin 'tmhedberg/SimpylFold'
 
 " ide esque stuff i havent set up
@@ -157,7 +157,7 @@ nnoremap <Leader>b :Buffers<CR>
 
 " initialize fzf config and set some defaults
 let g:fzf_vim = {}
-let g:fzf_vim.buffers_jump = 1
+let g:fzf_vim.buffers_jump = 0
 
 
 """"""" END FZF """"""""""""'"
@@ -175,7 +175,7 @@ autocmd FileType python setlocal completeopt-=preview  " dont show the docstring
 
 
 "git blame and another git fun i havent learned yet
-Plugin 'tpope/vim-fugitive' 
+Plugin 'tpope/vim-fugitive'
 
 " status bar stuff
 "Plugin 'vim-airline/vim-airline'
@@ -194,7 +194,7 @@ au BufNewFile,BufRead *.thrift setlocal filetype=thrift " this should be in the 
 " in your plugin constants configuration section
 let g:virtualenv_auto_activate = 1
 
-" Bins mapping for file switching. 
+" Bins mapping for file switching.
 Plugin 'shenbin04/vim-related'
 
 
