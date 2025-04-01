@@ -12,6 +12,8 @@ source "${ZINIT_HOME}/zinit.zsh"
 
 # vim keybindings
 bindkey -v
+bindkey 'jj' vi-cmd-mode
+# export KEYTIMEOUT=10 # move to visual mode more quickly
 
 # Various configs
 # history - make history shared and a bund of no duplicates
@@ -44,8 +46,6 @@ zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
 bindkey '^E' end-of-line
 
 
-
-
 # plugins (todo: source these in a nother file)
 # predicated on zinit, above
 zinit light zsh-users/zsh-syntax-highlighting
@@ -66,4 +66,4 @@ autoload -U compinit && compinit
 # ~/.config/starship.toml
 # and into your dotfiles!!
 export STARSHIP_CONFIG=$DOTPATH/starship.toml
- eval "$(starship init zsh)"
+eval "$(starship init zsh)"

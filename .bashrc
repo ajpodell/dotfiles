@@ -24,6 +24,8 @@ fi
 
 source $DOTPATH/.shared_rc
 
+set -o vi
+
 # color constants
 # i think di means "directory" and is for the ls colors??
 COLOR_RED='\[\e[31m\]'

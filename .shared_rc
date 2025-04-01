@@ -1,5 +1,4 @@
 # these are shared commands that can be sourced in both bash and zsh
-set -o vi
 
 ##################################################################
 ############################## GIT ###############################
