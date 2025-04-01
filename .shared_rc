@@ -1,0 +1,41 @@
+# these are shared commands that can be sourced in both bash and zsh
+set -o vi
+
+##################################################################
+############################## GIT ###############################
+##################################################################
+alias g="git"
+alias gs="git status"
+alias ga="git add"
+alias gb="git branch"
+alias gd="git diff"
+alias grc="git rebase --continue"
+alias gca="git commit -am "
+alias gpoh="git push origin HEAD"
+alias gpfoh="git push --force origin HEAD"
+alias gpum="git pull upstream master"
+alias gpom="git pull origin main"  # gotta make this work with main and master
+alias gdom="git diff origin/main"
+alias gco='git checkout'
+alias gc='git checkout `FZF_DEFAULT_COMMAND="git branch" fzf`'
+
+# add the git scripts to path
+export PATH=$PATH:$DOTPATH/git_scripts
+##################################################################
+
+
+##################################################################
+############################## VIM ###############################
+##################################################################
+export EDITOR="nvim"
+alias vim="$EDITOR -p"
+alias vi="$EDITOR -p"
+alias rless="less -r"
+##################################################################
+
+
+# random ones
+alias grep='grep --color=auto --binary-file=without-match --exclude-dir=\.pants\.d --exclude="*.snap" --exclude-dir="dist"'
+
+
+# vim: ft=sh

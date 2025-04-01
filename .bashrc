@@ -22,6 +22,8 @@ if command -v tmux &> /dev/null; then
     fi
 fi
 
+source $DOTPATH/.shared_rc
+
 # color constants
 # i think di means "directory" and is for the ls colors??
 COLOR_RED='\[\e[31m\]'
@@ -78,12 +80,6 @@ esac
 # NOTE: always clone the dotfiles repo into $HOME/dotfiles
 alias brc="vim ~/dotfiles/.bashrc"
 
-# setup vim - if using neovim change editor to nvim
-export EDITOR="nvim"
-alias vim="$EDITOR -p"
-alias vi="$EDITOR -p"
-alias rless="less -r"
-
 # this doesnt work, or really make sense
 #alias vi="vim -p -c 'execute \"normal \".get(g:,\"mapleader\",\"\\\").\"f\"'"
 
@@ -93,33 +89,11 @@ alias "..."="cd ../.."
 alias "...."="cd ../../.."
 alias "....."="cd ../../../.."
 
-#vim in bash for mac
-set -o vi
-
-##################################################################
-############################## GIT ###############################
-##################################################################
-alias g="git"
-alias gs="git status"
-alias ga="git add"
-alias gb="git branch"
-alias gd="git diff"
-alias grc="git rebase --continue"
-alias gca="git commit -am "
-alias gpoh="git push origin HEAD"
-alias gpfoh="git push --force origin HEAD"
-alias gpum="git pull upstream master"
-alias gpom="git pull origin main"  # gotta make this work with main and master
-alias gdom="git diff origin/main"
-alias gco='git checkout'
-alias gc='git checkout `FZF_DEFAULT_COMMAND="git branch" fzf`'
 # bring autocomplete to g alias
 complete -o bashdefault -o default -o nospace -F _fzf_path_completion g
 
 
 
-# add the git scripts to path
-export PATH=$PATH:$DOTPATH/git_scripts
 
 gfr() {
     git fetch $1 $2;
@@ -227,7 +201,6 @@ shopt -s histappend
 # colorize output unless piping to a file. dont look at object binaries
 # the line numbers mess up fzf history search. disable for now
 #export GREP_OPTIONS='--color=auto --exclude=\*\.o --exclude-dir=""/Users/apodell/data/.git" --exclude-dir="/Users/apodell/data/tags" -nr' # not this one
-alias grep='grep --color=auto --binary-file=without-match --exclude-dir=\.pants\.d --exclude="*.snap" --exclude-dir="dist"'
 
 grep_with_without() {
     if (( $# != 3 )); then

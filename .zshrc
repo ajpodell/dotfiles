@@ -1,4 +1,5 @@
-
+# source the shared items
+source "$DOTPATH/.shared_rc"
 
 
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
