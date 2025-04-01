@@ -1,0 +1,5 @@
+* fzf setup
+* zinit for plugin manager
+** see more in the plugins for what is being used
+* starship for prompt - https://starship.rs/
+** curl -sS https://starship.rs/install.sh | sh

@@ -1,0 +1,42 @@
+format = """$python$username$hostname$git_branch $directory
+$character
+"""
+
+### --- OLD STUFF PULLED IN --- ###
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+
+[character]
+success_symbol = '[➜](bold green) '
+error_symbol = '[✗](bold red) '
+vimcmd_symbol = '[V](bold green) '
+
+[directory]
+truncate_to_repo=false
+style="yellow"
+
+[git_branch]
+symbol=''
+format = '[\($symbol$branch\)]($style)'
+style="red"
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style))'
+
+[python]
+# with python version
+# format = '[${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style)'
+# just virtualenv
+format = '[(\($virtualenv\))]($style) '
+style="blue bold"
+
+[username]
+format="[$user]($style)"
+show_always= true
+style_user="green"
+
+[hostname]
+format="[@$hostname]($style)"
+ssh_only=false
+style="green"

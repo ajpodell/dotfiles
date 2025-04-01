@@ -17,8 +17,8 @@
 # but only if were on a system where tmux is supported
 if command -v tmux &> /dev/null; then
     if [[ ! $TERM =~ screen-256color ]]; then
-        echo "not starting yet"
-        # tmux attach || tmux
+        # echo "not starting yet"
+        tmux attach || tmux
     fi
 fi
 
@@ -69,7 +69,7 @@ case "$(uname -s)" in
    # Add here more strings to compare
    # See correspondence table at the bottom of this answer
    *)
-     echo 'Other OS' 
+     echo 'Other OS'
      ;;
 esac
 
@@ -79,7 +79,7 @@ esac
 alias brc="vim ~/dotfiles/.bashrc"
 
 # setup vim - if using neovim change editor to nvim
-export EDITOR="nvim" 
+export EDITOR="nvim"
 alias vim="$EDITOR -p"
 alias vi="$EDITOR -p"
 alias rless="less -r"
@@ -231,11 +231,11 @@ alias grep='grep --color=auto --binary-file=without-match --exclude-dir=\.pants\
 
 grep_with_without() {
     if (( $# != 3 )); then
-        echo "Usage: grep_with_without string_to_match string_to_exclude directory" 
+        echo "Usage: grep_with_without string_to_match string_to_exclude directory"
         return 1;
     fi
 
-    # shellcheck disable=SC2046 
+    # shellcheck disable=SC2046
     grep -Lr "$2" $(grep -lr "$1" "$3")
 }
 
@@ -254,7 +254,7 @@ mkcd() {
 
 # TODO: conditionally accept a filetype and pass to the find command as * or *.[$filetype]
 sed_all() {
-    # for mac, sed needs a backup file, for linux, it needs the -e i think? 
+    # for mac, sed needs a backup file, for linux, it needs the -e i think?
     echo $1
     echo $2
     # add LANG so it doesnt blow up with utf-8 re issues
@@ -337,7 +337,7 @@ test_until_fail() {
     echo "$@"
 
     while [[ "$?" == "0" ]]; do \
-    # just do whatever command 
+    # just do whatever command
         echo "running tests"
         $@
     done
@@ -346,6 +346,14 @@ test_until_fail() {
 
 # source fzf and add some fun hotkeys
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# the source completion for fzf - you have to install fzf first
+# https://nixos.wiki/wiki/Fzf --- though may be installed from non-nix
+if command -v fzf-share >/dev/null; then
+  source "$(fzf-share)/key-bindings.bash"
+  source "$(fzf-share)/completion.bash"
+fi
+
 fvi() {
     # data repo should be defined as the root of where you will want to live
     #root=$(git_root)
@@ -430,11 +438,10 @@ do_layout() {
 # do this last maybe?
 function prompt {
     # set python_virtualenv
-    set_virtualenv 
+    set_virtualenv
 
     PS1='$ '
     echo -e "${PYTHON_VIRTUALENV} ${COLOR_GREEN_MAC}${USER}@${HOSTNAME}${COLOR_RED_MAC}$(parse_git_branch) ${COLOR_YELLOW_MAC}${PWD}\a${COLOR_RESET_MAC}"
     #echo -e ${COLOR_GREEN2}${USER}'@'${HOSTNAME}${COLOR_RED2}`__git_ps1`${COLOR_YELLOW2}' '`pwdtail`'\a'${COLOR_RESET2}
 }
 PROMPT_COMMAND='prompt'
-
