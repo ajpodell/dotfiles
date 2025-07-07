@@ -57,6 +57,7 @@ let g:ale_echo_msg_format = '%linter% says: %s'
 let g:ale_python_auto_virtualenv=1
 let g:ale_python_pylint_use_global=1
 " idk if i want this yet
+" let g:ale_python_black_options= '--config=/path/to/config'
 let g:ale_fix_on_save = 1
 
 ""'autopep8' - Fix PEP8 issues with autopep8.
@@ -197,6 +198,8 @@ let g:virtualenv_auto_activate = 1
 " Bins mapping for file switching.
 Plugin 'shenbin04/vim-related'
 
+" copilot
+Plugin 'github/copilot.vim'
 
 
 " ----- YouCompleteMe ----- "

@@ -214,7 +214,12 @@ cnoremap vr vertical resize
 
 " cool function to create a url w/ respect to a file. More of an exercise since created around a specific url. It also doesnt work sometimes, but idk when
 " todo: split out getting the file_path -- the commented code only worked if you were operating within the repo. This should work regardless of where you start from, even from a different repo
-function! GetStashUrl(base_url)
+
+" set g:repo_url somewhere - moved to var to share with work and personal configs
+" ex: let g:repo_url='https://github.hioscar.com/apodell/'
+function! GetRepoUrl()
+    " instead of using the url, have the config overwrite the variable
+    let l:base_url = g:repo_url
     "let l:current_file=expand('%:t') " use this when you just want the
     " let l:current_dir = getcwd()
     " echo l:current_dir
@@ -244,19 +249,22 @@ function! GetStashUrl(base_url)
     " for stash
     " let l:url = trim(a:base_url . l:git_repo . '/browse/' . l:git_relative_file_path . '#' . l:line)
     " for git
-    let l:url = trim(a:base_url . l:git_repo . '/blob/master/' . l:git_relative_file_path . '#L'.l:line)
+    let l:url = trim(l:base_url . l:git_repo . '/blob/master/' . l:git_relative_file_path . '#L'.l:line)
+    " if baseurl is a pram
+    " let l:url = trim(a:base_url . l:git_repo . '/blob/master/' . l:git_relative_file_path . '#L'.l:line)
     echo l:url
 
     " this part will only work if pbcopy is set up
     " this has an interesting idea for moving bash aliases into another file, and then enabling them from within vim
     " https://stackoverflow.com/questions/4642822/how-to-make-bashrc-aliases-available-within-a-vim-shell-command
-    " call system( 'echo "' . l:url . '" | pbcopy') 
+    " call system( 'echo "' . l:url . '" | pbcopy')
     " "echo -n" will prevent the newline from getting added
     call system( 'echo -n "' . l:url . '" |  ssh -l $USER host.docker.internal pbcopy --')
     " let l:current_dir = getcwd()
 
     " echo l:current_dir
 endfunc
+nnoremap <Leader>l :call GetRepoUrl() <Cr>
 
 function! GitRoot()
     " git root is defined in git_scripts

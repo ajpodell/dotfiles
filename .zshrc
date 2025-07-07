@@ -52,6 +52,8 @@ zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 
+plugins=(git vi-mode)
+
 # come back to this - basically tab on everything, but you'll want to change the
 # key for "accept suggestion for autosuggestions"
 zinit light Aloxaf/fzf-tab

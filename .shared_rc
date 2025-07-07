@@ -37,4 +37,5 @@ alias rless="less -r"
 alias grep='grep --color=auto --binary-file=without-match --exclude-dir=\.pants\.d --exclude="*.snap" --exclude-dir="dist"'
 
 
+export INPUTRC=$DOTPATH/.inputrc
 # vim: ft=sh
