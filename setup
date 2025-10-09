@@ -65,6 +65,14 @@ if [[ $? != 0 ]] ; then
 else
     echo "fzf already installed"
 fi
+which fd
+if [[ $? != 0 ]] ; then
+    echo "fd not found, installing"
+    brew install fd
+else
+    echo "fd already installed"
+fi
+
 
 
 # if [ ! -f $HOME/.bash_profile ]; then

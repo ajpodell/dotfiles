@@ -69,3 +69,20 @@ autoload -U compinit && compinit
 # and into your dotfiles!!
 export STARSHIP_CONFIG=$DOTPATH/starship.toml
 eval "$(starship init zsh)"
+
+
+# set pyenv and map python to python3
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+# this stops the second print of the virtualenv in its own line above the prompt
+export PYENV_VIRTUALENV_DISABLE-PROMPT=1
+eval "$(pyenv virtualenv-init -)" # If using pyenv-virtualenv
+
+# setting up autoenv
+# will need to do a check for this one
+if [ -f /opt/homebrew/opt/autoenv/activate.sh ]; then
+    export AUTOENV_ENABLE_LEAVE=yes
+    # export AUTOENV_VIEWER=cat
+    source /opt/homebrew/opt/autoenv/activate.sh
+fi
