@@ -19,6 +19,13 @@ fi
 echo "instaling git-completion script"
 curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
 
+# should check that dotpath is in place - but just do it now
+if [ ! -n "$DOTPATH" ] ; then
+    echo "setting DOTPATH"
+    export DOTPATH=$HOME/dotfiles
+else
+    echo "DOTPATH already set"
+fi
 
 
 # install xcode command line tools if not installed
@@ -26,16 +33,6 @@ curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-com
 
 # ------ END MAC STUFF ------
 
-# install vundle
-echo "looking for vundle";
-if [ ! -d $HOME/.vim/bundle/Vundle.vim ]; then
-    echo "installing vundle"
-    git clone -q https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim;
-
-    # go to  ~/dotfiles/.vim.plugins and :PluginInstall
-else
-    echo "vundle already installed"
-fi
 
 # TODO: add a thing if dotpath doesnt exit - bail now. echo you gotta source the bashrc
 
@@ -46,10 +43,45 @@ if [ ! -f $HOME/.tmux.conf ]; then
     echo "adding .tmux.conf"
     echo "source-file $DOTPATH/.tmux.conf" > $HOME/.tmux.conf
 fi
-if [ ! -f $HOME/.bash_profile ]; then
-    echo "adding .bash_profile"
-    echo "source $DOTPATH/.bashrc" > $HOME/.bash_profile
+#############################
+#########    ZSH    #########
+#############################
+# Create zshrc
+if [ ! -f $HOME/.zshrc ]; then
+    echo "adding .zshrc"
+    echo "source $DOTPATH/.zshrc" > $HOME/.zshrc
 fi
+which starship
+if [[ $? != 0 ]] ; then
+    echo "starship not found, installing"
+    brew install starship
+else
+    echo "starship already installed"
+fi
+which fzf
+if [[ $? != 0 ]] ; then
+    echo "fzf not found, installing"
+    brew install fzf
+else
+    echo "fzf already installed"
+fi
+
+
+# if [ ! -f $HOME/.bash_profile ]; then
+#   echo "adding .bash_profile"
+#     echo "source $DOTPATH/.bashrc" > $HOME/.bash_profile
+# fi
+
+#############################
+#########    VIM    #########
+#############################
+echo "vim setup:"
+which nvim
+if [[ $? != 0 ]] ; then
+    echo "nvim not found, installing"
+    brew install neovim
+fi
+
 if [ ! -f $HOME/.vimrc ]; then
     echo "adding .vimrc"
     echo "source $DOTPATH/.vimrc" > $HOME/.vimrc
@@ -58,23 +90,38 @@ fi
 # for using neovim
 # create a file:
 # ~/.config/nvim/init.vim (that will be like your .vimrc, you’ll paste all your custom config at this file)
-if [ ! f $HOME/.config/nvim/init.vim ]; then
-    mkdir -p $HOME/.config/nvim && touch $HOME/.config/nvim/init.vim
-    echo "set runtimepath^=~/.vim runtimepath+=~/.vim/after\nlet &packpath = &runtimepath\nsource ~/.vimrc"
-fi
-
 #that file should have the following to just leave .vimrc as config
 
 # set runtimepath^=~/.vim runtimepath+=~/.vim/after
 # let &packpath = &runtimepath
 # source ~/.vimrc
+if [ ! -f $HOME/.config/nvim/init.vim ]; then
+    mkdir -p $HOME/.config/nvim && touch $HOME/.config/nvim/init.vim
+    printf "set runtimepath^=~/.vim runtimepath+=~/.vim/after\nlet &packpath = &runtimepath\nsource ~/.vimrc" >> $HOME/.config/nvim/init.vim
+fi
+
+# install vundle
+echo "looking for vundle";
+if [ ! -d $HOME/.vim/bundle/Vundle.vim ]; then
+    echo "installing vundle"
+    git clone -q https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim;
+    # go to  ~/dotfiles/.vim.plugins and :PluginInstall
+else
+    echo "vundle already installed"
+fi
 
 
+#############################
+#########    GIT    #########
+#############################
+# Create the gitconfig mapping
+if [ ! -z "$(grep "dotfiles/.gitconfig" "$HOME/.gitconfig")" ]; then 
+    echo "gitconfig already configured"
+else
+    echo "adding dotfiles gitconfig to gitconfig path"
+    echo -e "[include]\n\tpath = ~/dotfiles/.gitconfig" >> $HOME/.gitconfig
+fi
 
-# include the git config here
-echo -e "[include]\n\tpath = ~/dotfiles/.gitconfig" >> ~/.gitconfig
 
-
-# Do some git configuration
 
 # vim: ft=sh
