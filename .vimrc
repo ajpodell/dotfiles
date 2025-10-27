@@ -217,6 +217,8 @@ cnoremap vr vertical resize
 
 " set g:repo_url somewhere - moved to var to share with work and personal configs
 " ex: let g:repo_url='https://github.hioscar.com/apodell/'
+" TODO: it would be cool to get this from a sys call to git remote -v and parse it
+let g:repo_url='https://github.com/AdaptiveZoning/'
 function! GetRepoUrl()
     " instead of using the url, have the config overwrite the variable
     let l:base_url = g:repo_url
@@ -257,9 +259,9 @@ function! GetRepoUrl()
     " this part will only work if pbcopy is set up
     " this has an interesting idea for moving bash aliases into another file, and then enabling them from within vim
     " https://stackoverflow.com/questions/4642822/how-to-make-bashrc-aliases-available-within-a-vim-shell-command
-    " call system( 'echo "' . l:url . '" | pbcopy')
+    call system( 'echo "' . l:url . '" | pbcopy')
     " "echo -n" will prevent the newline from getting added
-    call system( 'echo -n "' . l:url . '" |  ssh -l $USER host.docker.internal pbcopy --')
+    " call system( 'echo -n "' . l:url . '" |  ssh -l $USER host.docker.internal pbcopy --')
     " let l:current_dir = getcwd()
 
     " echo l:current_dir

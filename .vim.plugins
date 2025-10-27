@@ -38,28 +38,37 @@ map <leader>ap :ALEPreviousWrap<cr>
 nmap <leader>af <Plug>(ale_fix)
 " probably want some form of pylint, but its being annoying right now
 let g:ale_linters = {
-\   'javascript': ['flow', 'eslint', 'prettier'],
-\   'python': ['pylint']
+\   'javascript': ['flow', 'eslint', 'prettier', 'tslint'],
+\   'typescriptreact': ['eslint'],
+\   'python': ['ruff']
 \}
+" \   'python': ['ruff', 'isort', 'mypy']
 
 ", 'importjs'],
 " \   'python': ['autopep8', 'isort'],
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'python': ['ruff'],
 \   'javascript': ['prettier', 'eslint'],
-\   'python': ['black'],
+\   'typescriptreact': ['tslint'],
 \   'css': ['prettier', 'stylelint']
 \}
+
 let g:ale_echo_msg_format = '%linter% says: %s'
 " try to get pylint working with global
 " let g:ale_python_pylint_options = '--rcfile pylintrc'
 " let g:ale_python_pylint_options = '--rcfile ~/data/pylintrc'
 let g:ale_python_auto_virtualenv=1
-let g:ale_python_pylint_use_global=1
+" let g:ale_python_pylint_use_global=1
 " idk if i want this yet
 " let g:ale_python_black_options= '--config=/path/to/config'
+let g:ale_python_ruff_options= '--config="~/bookkeeping/ruff.toml"'
+let g:ale_python_ruff_use_global = 1
+let g:ale_python_ruff_change_directory = 1
+let g:ale_python_ruff_format_change_directory = 1
 let g:ale_fix_on_save = 1
 
+" other fixers
 ""'autopep8' - Fix PEP8 issues with autopep8.
 ""'black' - Fix PEP8 issues with black.
 ""'isort' - Sort Python imports with isort.
@@ -185,8 +194,8 @@ Plugin 'tpope/vim-fugitive'
 
 
 " syntax highlighting for thrift
-Bundle 'solarnz/thrift.vim'
-au BufNewFile,BufRead *.thrift setlocal filetype=thrift " this should be in the package, but isnt working"
+" Bundle 'solarnz/thrift.vim'
+" au BufNewFile,BufRead *.thrift setlocal filetype=thrift " this should be in the package, but isnt working"
 
 
 "nerdtree
@@ -199,7 +208,7 @@ let g:virtualenv_auto_activate = 1
 Plugin 'shenbin04/vim-related'
 
 " copilot
-Plugin 'github/copilot.vim'
+" Plugin 'github/copilot.vim'
 
 
 " ----- YouCompleteMe ----- "

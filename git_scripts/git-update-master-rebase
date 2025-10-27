@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
-git fetch origin master:master && git rebase master
+# git fetch origin master:master && git rebase master
+git fetch origin develop:develop && git rebase develop
 
 # vim: ft=sh

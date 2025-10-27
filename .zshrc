@@ -88,5 +88,6 @@ if [ -f /opt/homebrew/opt/autoenv/activate.sh ]; then
     export AUTOENV_ASSUME_YES=true
     export AUTOENV_ENABLE_LEAVE=yes
     export AUTOENV_VIEWER=cat
+    export AUTOENV_ENV_FILENAME=".env.autoenv"
     source /opt/homebrew/opt/autoenv/activate.sh
 fi
