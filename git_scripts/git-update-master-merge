@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
-git fetch origin master:master && git merge master
+# git fetch origin master:master && git merge master
+git fetch origin develop:develop && git merge develop
 
 # vim: ft=sh
