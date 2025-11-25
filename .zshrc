@@ -1,7 +1,6 @@
 # source the shared items
-echo "zshrc running"
+# echo "zshrc running"
 source "$DOTPATH/.shared_rc"
-
 
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
@@ -83,11 +82,17 @@ eval "$(pyenv virtualenv-init -)" # If using pyenv-virtualenv
 # setting up autoenv
 # will need to do a check for this one
 if [ -f /opt/homebrew/opt/autoenv/activate.sh ]; then
-    echo "starting autoenv"
+    # echo "starting autoenv"
     # this can be a little dangerous since were not validating our .env files, but i think i'm ok with it
     export AUTOENV_ASSUME_YES=true
     export AUTOENV_ENABLE_LEAVE=yes
     export AUTOENV_VIEWER=cat
     export AUTOENV_ENV_FILENAME=".env.autoenv"
+
+    # these are test items to see if they work with cursor - it is suggesting that these not being set are the culprits of the missing test commands
+    export AUTOENV_AUTH_FILE="$HOME/.autoenv_authorized"
+    export AUTOENV_NOTAUTH_FILE="$HOME/.autoenv_notauthorized"
+
+    # this is provided by autoenv
     source /opt/homebrew/opt/autoenv/activate.sh
 fi

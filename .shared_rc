@@ -36,6 +36,29 @@ alias rless="less -r"
 # random ones
 alias grep='grep --color=auto --binary-file=without-match --exclude-dir=\.pants\.d --exclude="*.snap" --exclude-dir="dist"'
 
+# Load specific files for mac or linux
+case "$(uname -s)" in
+   Darwin)
+  	 if [ -f $DOTPATH/.bash_mac ]; then
+		source $DOTPATH/.bash_mac
+	 fi
+     ;;
+   Linux)
+  	 if [ -f $DOTPATH/.bash_linux ]; then
+		source $DOTPATH/.bash_linux
+	 fi
+     ;;
+   CYGWIN*|MINGW32*|MSYS*)
+     echo 'why are you on windows?'
+     ;;
+   # Add here more strings to compare
+   # See correspondence table at the bottom of this answer
+   *)
+     echo 'Other OS'
+     ;;
+esac
+
+
 
 export INPUTRC=$DOTPATH/.inputrc
 # vim: ft=sh
