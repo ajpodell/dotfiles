@@ -40,7 +40,7 @@ nmap <leader>af <Plug>(ale_fix)
 let g:ale_linters = {
 \   'javascript': ['flow', 'eslint', 'prettier', 'tslint'],
 \   'typescriptreact': ['eslint'],
-\   'python': ['ruff']
+\   'python': ['ruff', 'mypy']
 \}
 " \   'python': ['ruff', 'isort', 'mypy']
 
@@ -48,9 +48,9 @@ let g:ale_linters = {
 " \   'python': ['autopep8', 'isort'],
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'python': ['ruff'],
+\   'python': ['ruff', 'ruff_format'],
 \   'javascript': ['prettier', 'eslint'],
-\   'typescriptreact': ['tslint'],
+\   'typescriptreact': ['eslint', 'tslint'],
 \   'css': ['prettier', 'stylelint']
 \}
 
@@ -62,11 +62,12 @@ let g:ale_python_auto_virtualenv=1
 " let g:ale_python_pylint_use_global=1
 " idk if i want this yet
 " let g:ale_python_black_options= '--config=/path/to/config'
-let g:ale_python_ruff_options= '--config="~/bookkeeping/ruff.toml"'
+let g:ale_python_ruff_options='--config="~/bookkeeping/ruff.toml"'
 let g:ale_python_ruff_use_global = 1
-let g:ale_python_ruff_change_directory = 1
+" let g:ale_python_ruff_change_directory = 1
 let g:ale_python_ruff_format_change_directory = 1
 let g:ale_fix_on_save = 1
+" let g:ale_python_ruff_executable = 'ruff --show-settings'
 
 " other fixers
 ""'autopep8' - Fix PEP8 issues with autopep8.
@@ -98,17 +99,29 @@ let g:ale_fix_on_save = 1
 Plugin 'esamattis/slimux'  " send command to tmux window"
 " test running -- now vim-test/vim-test
 Plugin 'janko-m/vim-test'
-let test#javascript#jest#executable = 'npm test'
+let g:test#javascript#jest#executable = 'npm test'
+" playing with playwright - new code
+
+" TODO: can i get different runners based on if it looks like a vi test file or a playwright
+" let test#javascript#playwright#file_pattern = '\.spec\.ts'
+let g:test#javascript#playwright#executable = 'npm run test:e2e -- --headed'
+" let g:test#javascript#runner = 'playwright'
+
 let test#python#runner = 'pytest'
-let test#python#pytest#executable = 'pytest -s'
+" this is the real one, but try this for work
+" let test#python#pytest#executable = 'pytest -s'
+let test#python#pytest#executable = 'make test'
+
 " make test commands execute using dispatch.vim
 " slimux"
 " let test#strategy = "neovim"
 let test#strategy = "slimux"
 let test#python#file_pattern = '*_test.py'
 "let g:test#javascript#runner = 'NODE_PATH=$(pwd) NODE_ENV=testing jest'
-map <Leader>tt <CR> :TestNearest <CR>
-map <Leader>tf <CR> :TestFile <CR>
+nnoremap <Leader>tt :TestNearest <CR>
+nnoremap <Leader>tf :TestFile <CR>
+nnoremap <Leader>tl :TestLast<Cr>
+nnoremap <Leader>tv :TestVisit<Cr>
 
 
 
@@ -138,7 +151,7 @@ Plugin 'tpope/vim-surround'
 " Plugin 'jnurmine/Zenburn' " this is a colorscheme to check out later
 
 Plugin 'preservim/nerdtree'
-" nnoremap <Leader>e :NERDTree<cr>
+nnoremap <C-n> :NERDTree<cr>
 
 " Plugin 'jistr/vim-nerdtree-tabs' " still need to learn this. This isnt supported anymore
 
@@ -164,6 +177,7 @@ endfunc
 " noremap <Leader>f :call fzf#run({'source': 'fd . $DATA_REPO --type f --hidden -E .git', 'sink': 'e'})<CR>
 noremap <Leader>f :call FastFzf()<CR>
 nnoremap <Leader>b :Buffers<CR>
+nnoremap <Leader>gg :Rg!<Cr>
 
 " initialize fzf config and set some defaults
 let g:fzf_vim = {}
@@ -186,6 +200,11 @@ autocmd FileType python setlocal completeopt-=preview  " dont show the docstring
 
 "git blame and another git fun i havent learned yet
 Plugin 'tpope/vim-fugitive'
+" just barely getting started here, but try to start using vim more to deal with git stuff
+nnoremap <Leader>gs :vert G<Cr>
+nnoremap <C-g> :vert G<Cr>
+" this is used by jedi-vim, but i dont actually prefer it there, so lets consider overwriting
+nnoremap <Leader>gd :Gdiff<Cr>
 
 " status bar stuff
 "Plugin 'vim-airline/vim-airline'
@@ -209,6 +228,14 @@ Plugin 'shenbin04/vim-related'
 
 " copilot
 " Plugin 'github/copilot.vim'
+
+
+" For rendering markdown
+Plugin 'OXY2DEV/markview.nvim'
+" This adds fonts
+" Plugin 'nvim-mini/mini.nvim', { 'branch': 'stable' }
+" require('mini.icons').setup()
+Plugin 'nvim-tree/nvim-web-devicons'
 
 
 " ----- YouCompleteMe ----- "
