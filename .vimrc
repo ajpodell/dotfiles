@@ -220,6 +220,20 @@ cnoremap vr vertical resize
 " TODO: it would be cool to get this from a sys call to git remote -v and parse it
 let g:repo_url='https://github.com/AdaptiveZoning/'
 function! GetRepoUrl()
+    " rebuild with gh browse -- requires the gh command
+    " example:
+    " gh browse backend/procore/models.py:3  -n --commit=$(git rev-parse HEAD)
+
+    " let l:current_file=expand('%:t')
+    " echo 'current file ' . l:current_file
+    " " let file_dir = expand('%:h')
+    " " "echo file_dir
+    " " " this version works
+    " " let l:git_relative_file_path = trim(system('cd ' . file_dir . '; ' .'git ls-files --full-name ' . l:current_file))
+    " return
+
+    " original mechanism
+    """"""""""""""""""""""
     " instead of using the url, have the config overwrite the variable
     let l:base_url = g:repo_url
     "let l:current_file=expand('%:t') " use this when you just want the
