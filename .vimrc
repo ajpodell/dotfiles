@@ -317,8 +317,14 @@ set modeline
 set modelines=5
 
 " useful functions
-" inoremap <Leader>p import pdb; pdb.set_trace()
+" set PYTHONBREAKPOINT=ipdb.set_trace in .zshrc to use breakpoint
+" inoremap <Leader>p import ipdb; ipdb.set_trace()
+" really i want this (if i cant get breakpoint working
+"    # fmt: off
+"    import ipdb; ipdb.set_trace()  # pylint: disable=unused-import,multiple-statements # noqa # fmt: skip
+"    # fmt: on
 inoremap <Leader>p breakpoint()
+inoremap <Leader>cp from celery.contrib import rdb; rdb.set_trace()
 
 nnoremap <Leader>w :%s/\s\+$//e<cr>  " clean trailing whitespace for the file
 nnoremap  <Leader>s :e %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
