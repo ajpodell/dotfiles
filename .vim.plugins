@@ -62,7 +62,10 @@ let g:ale_python_auto_virtualenv=1
 " let g:ale_python_pylint_use_global=1
 " idk if i want this yet
 " let g:ale_python_black_options= '--config=/path/to/config'
-let g:ale_python_ruff_options='--config="~/bookkeeping/ruff.toml"'
+
+" because ruff will remove an import after i comment out a usage its more annoying than helpful.
+" it can still get caught at pre-commit, so just disable it for me, rather than at the global ruff.toml
+let g:ale_python_ruff_options='--config="~/bookkeeping/ruff.toml" --unfixable=F401'
 let g:ale_python_ruff_use_global = 1
 " let g:ale_python_ruff_change_directory = 1
 let g:ale_python_ruff_format_change_directory = 1
