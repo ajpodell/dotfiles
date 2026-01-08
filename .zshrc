@@ -13,6 +13,9 @@ source "${ZINIT_HOME}/zinit.zsh"
 # vim keybindings
 bindkey -v
 bindkey 'jj' vi-cmd-mode
+# esc+v to open command in editor
+autoload edit-command-line; zle -N edit-command-line
+bindkey -M vicmd v edit-command-line
 # export KEYTIMEOUT=10 # move to visual mode more quickly
 
 # Various configs
@@ -78,6 +81,8 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 eval "$(pyenv virtualenv-init -)" # If using pyenv-virtualenv
+# use ipdb in python
+export PYTHONBREAKPOINT=ipdb.set_trace
 
 # setting up autoenv
 # will need to do a check for this one
