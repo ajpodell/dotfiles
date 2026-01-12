@@ -234,10 +234,8 @@ Plugin 'shenbin04/vim-related'
 
 
 " For rendering markdown
+" i also took a look at render-markdown, but this seems to be more active
 Plugin 'OXY2DEV/markview.nvim'
-" This adds fonts
-" Plugin 'nvim-mini/mini.nvim', { 'branch': 'stable' }
-" require('mini.icons').setup()
 Plugin 'nvim-tree/nvim-web-devicons'
 
 
@@ -286,5 +284,30 @@ Plugin 'nvim-tree/nvim-web-devicons'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
+
+
+" ----- New section for configuring plugins in Lua. must go after vundle#end() ----- "
+
+" ------- MARKVIEW------- "
+" Configure markview after plugins are loaded
+" To use Nerd Font icons instead, install a font (brew install --cask font-hack-nerd-font)
+" then remove the preset: require("markview").setup({})
+lua << EOF
+require("markview").setup({
+    preview = {
+        -- Modes where preview is shown
+        modes = { "n", "no", "c" },
+        -- Modes where hybrid mode can be enabled (raw text around cursor)
+        hybrid_modes = { "n" },
+        -- Only show raw text on current line (0 lines above/below)
+        edit_range = { 0, 0 },
+    }
+})
+EOF
+
+" Markview keymaps
+nnoremap <leader>ms :Markview splitToggle<CR>
+nnoremap <leader>mh :Markview HybridToggle<CR>
+nnoremap <leader>mm :Markview<CR>
 
 " vim: ft=vim

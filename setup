@@ -95,6 +95,8 @@ if [ ! -f $HOME/.vimrc ]; then
     echo "source $DOTPATH/.vimrc" > $HOME/.vimrc
 fi
 
+echo "dont forget to add a nerdfont - like hack nerdfont - then set to your profile in iterm"
+
 # for using neovim
 # create a file:
 # ~/.config/nvim/init.vim (that will be like your .vimrc, you’ll paste all your custom config at this file)
