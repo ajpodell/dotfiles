@@ -71,7 +71,17 @@ autoload -U compinit && compinit
 # ~/.config/starship.toml
 # and into your dotfiles!!
 export STARSHIP_CONFIG=$DOTPATH/starship.toml
-eval "$(starship init zsh)"
+
+# Check that the function `starship_zle-keymap-select()` is defined.
+# xref: https://github.com/starship/starship/issues/3418
+type starship_zle-keymap-select >/dev/null || \
+  {
+    eval "$(starship init zsh)"
+    # eval "$(/usr/local/bin/starship init zsh)"
+  }
+
+# replaced by above, which prevents repeated reloads causing an error
+# eval "$(starship init zsh)"
 
 
 # set pyenv and map python to python3
