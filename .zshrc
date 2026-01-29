@@ -97,7 +97,8 @@ export PYTHONBREAKPOINT=ipdb.set_trace
 # setting up autoenv
 # will need to do a check for this one
 if [ -f /opt/homebrew/opt/autoenv/activate.sh ]; then
-    # echo "starting autoenv"
+    # if [[ -o interactive ]] && [[ -t 0 ]]; then
+    # echo "starting autoenv" >&2
     # this can be a little dangerous since were not validating our .env files, but i think i'm ok with it
     export AUTOENV_ASSUME_YES=true
     export AUTOENV_ENABLE_LEAVE=yes
@@ -110,4 +111,20 @@ if [ -f /opt/homebrew/opt/autoenv/activate.sh ]; then
 
     # this is provided by autoenv
     source /opt/homebrew/opt/autoenv/activate.sh
+    # fi
 fi
+
+# Disable autoenv when there is no TTY attached
+if [[ ! -t 0 ]]; then
+  typeset -f cd >/dev/null 2>&1 && unset -f cd
+fi
+
+# ALTERNATE TO ABOVE
+# --- autoenv setup ---
+# source /path/to/autoenv/activate.sh
+# ---------------------
+
+# Disable autoenv in Cursor
+# if [[ "${TERM_PROGRAM:-}" == "cursor" || "${TERM_PROGRAM:-}" == "Cursor" ]]; then
+#   typeset -f cd >/dev/null 2>&1 && unset -f cd
+# fi
