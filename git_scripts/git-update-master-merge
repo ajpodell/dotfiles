@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 
-# git fetch origin master:master && git merge master
-git fetch origin develop:develop && git merge develop
+set -euo pipefail
+
+# Ensure failures propagate to callers (e.g. git-clean-landed-branch)
+# so they can detect fetch/merge errors via the exit code.
+
+# Resolve the main branch for this repo. Fails if unset.
+# To configure, run:
+#   git config project.main-branch <branch>
+main_branch=$(git config --get project.main-branch 2>/dev/null) || {
+    echo "Error: project.main-branch is not set for this repo."
+    echo "Run: git config project.main-branch <branch>"
+    exit 1
+}
+
+git fetch origin "$main_branch:$main_branch" && git merge "$main_branch"
 
 # vim: ft=sh

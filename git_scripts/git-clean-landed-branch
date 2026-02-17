@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Resolve the main branch for this repo. Fails if unset.
+# To configure, run:
+#   git config project.main-branch <branch>
+main_branch=$(git config --get project.main-branch 2>/dev/null) || {
+    echo "Error: project.main-branch is not set for this repo."
+    echo "Run: git config project.main-branch <branch>"
+    exit 1
+}
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$branch" = "$main_branch" ]; then
+    echo "Error: already on $main_branch, nothing to clean."
+    exit 1
+fi
+
+echo "Cleaning landed branch: $branch (main: $main_branch)"
+
+# Update main branch and merge into current branch.
+# Delegates to git-update-master-merge which handles the fetch + merge.
+if ! git-update-master-merge; then
+    echo "Error: git-update-master-merge failed (fetch or merge conflict)."
+    exit 1
+fi
+
+# Verify no diff against main (squash merge should contain all changes)
+if ! git diff --quiet "$main_branch"; then
+    echo "Error: branch has differences from $main_branch. Your PR may not be merged yet."
+    echo ""
+    git diff --stat "$main_branch"
+    exit 1
+fi
+
+# Align commits with main branch
+echo "Resetting to $main_branch..."
+git reset "$main_branch"
+
+# Switch to main and delete the branch
+echo "Checking out $main_branch..."
+git checkout "$main_branch"
+
+echo "Deleting branch $branch..."
+git branch -d "$branch"
+
+echo "Cleaned up $branch successfully."
+
+# vim: ft=sh
