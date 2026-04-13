@@ -2,105 +2,75 @@
 
 # a basic setup script for starting up a new mac
 
+set -euo pipefail
+
 if [[ "$(uname)" != "Darwin" ]] ; then
     echo "this setup script only supports macOS"
     exit 1
 fi
 
-if [ -z "$DOTPATH" ] ; then
+if [ -z "${DOTPATH:-}" ] ; then
     echo "DOTPATH is not set"
     exit 1
 fi
 
-# TODO: make this optional, since want to have linux or mac compatible
+brew_install_if_missing() {
+    local cmd="$1"
+    local pkg="${2:-$1}"
+    if ! command -v "$cmd" >/dev/null ; then
+        echo "$cmd not found, installing"
+        brew install "$pkg"
+    else
+        echo "$cmd already installed"
+    fi
+}
 
-# -- all of this should be mac only --
-# put DOTPATH somewhere
+# install xcode command line tools if not installed
+xcode-select -p >/dev/null 2>&1 || xcode-select --install
 
 echo "looking for homebrew"
-which -s brew
-if [[ $? != 0  ]] ; then
-    echo "installing homebrew";
+if ! command -v brew >/dev/null ; then
+    echo "installing homebrew"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     # exit here, because you need to run the commands after installation for setup
     # dont necessarily script these
     # echo >> /Users/aaron/.zprofile
     # echo 'eval "$(/opt/homebrew/bin/brew shellenv zsh)"' >> /Users/aaron/.zprofile
     # eval "$(/opt/homebrew/bin/brew shellenv zsh)"
-
 else
     echo "updating homebrew"
     brew update
 fi
-
-# should check that dotpath is in place - but just do it now
-if [ ! -n "$DOTPATH" ] ; then
-    echo "setting DOTPATH"
-    export DOTPATH=$HOME/dotfiles
-else
-    echo "DOTPATH already set"
-fi
-
-
-# install xcode command line tools if not installed
-# xcode-select --install
-
-# ------ END MAC STUFF ------
-
-
-# TODO: add a thing if dotpath doesnt exit - bail now. echo you gotta source the bashrc
 
 # create top-level files --- TODO these should be more like an append. and ideally it would take in the appropriate file, since bashrc or bash_profile or .bashrc.user could be used
 # NOTE
 # inputrc is handled by a path variable in the bashrc
 
 #############################
+######    CLI TOOLS    ######
+#############################
+brew_install_if_missing tmux
+brew_install_if_missing starship
+brew_install_if_missing fzf
+brew_install_if_missing fd
+brew_install_if_missing nvim neovim
+
+#############################
 ########     TMUX     #######
 #############################
-if [ ! -f $HOME/.tmux.conf ]; then
+if [ ! -f "$HOME/.tmux.conf" ]; then
     echo "adding .tmux.conf"
-    echo "source-file $DOTPATH/.tmux.conf" > $HOME/.tmux.conf
-fi
-
-which tmux
-if [[ $? != 0 ]] ; then
-    echo "tmux not found, installing"
-    brew install tmux
-else
-    echo "tmux already installed"
+    echo "source-file $DOTPATH/.tmux.conf" > "$HOME/.tmux.conf"
 fi
 
 #############################
 #########    ZSH    #########
 #############################
 # Create zshrc
-if [ ! -f $HOME/.zshrc ]; then
+if [ ! -f "$HOME/.zshrc" ]; then
     echo "adding .zshrc"
-    echo "source $DOTPATH/.zshrc" > $HOME/.zshrc
+    echo "source $DOTPATH/.zshrc" > "$HOME/.zshrc"
 fi
-which starship
-if [[ $? != 0 ]] ; then
-    echo "starship not found, installing"
-    brew install starship
-else
-    echo "starship already installed"
-fi
-which fzf
-if [[ $? != 0 ]] ; then
-    echo "fzf not found, installing"
-    brew install fzf
-else
-    echo "fzf already installed"
-fi
-which fd
-if [[ $? != 0 ]] ; then
-    echo "fd not found, installing"
-    brew install fd
-else
-    echo "fd already installed"
-fi
-
-
 
 # if [ ! -f $HOME/.bash_profile ]; then
 #   echo "adding .bash_profile"
@@ -110,16 +80,9 @@ fi
 #############################
 #########    VIM    #########
 #############################
-echo "vim setup:"
-which nvim
-if [[ $? != 0 ]] ; then
-    echo "nvim not found, installing"
-    brew install neovim
-fi
-
-if [ ! -f $HOME/.vimrc ]; then
+if [ ! -f "$HOME/.vimrc" ]; then
     echo "adding .vimrc"
-    echo "source $DOTPATH/.vimrc" > $HOME/.vimrc
+    echo "source $DOTPATH/.vimrc" > "$HOME/.vimrc"
 fi
 
 echo "dont forget to add a nerdfont - like hack nerdfont - then set to your profile in iterm"
@@ -132,16 +95,16 @@ echo "dont forget to add a nerdfont - like hack nerdfont - then set to your prof
 # set runtimepath^=~/.vim runtimepath+=~/.vim/after
 # let &packpath = &runtimepath
 # source ~/.vimrc
-if [ ! -f $HOME/.config/nvim/init.vim ]; then
-    mkdir -p $HOME/.config/nvim && touch $HOME/.config/nvim/init.vim
-    printf "set runtimepath^=~/.vim runtimepath+=~/.vim/after\nlet &packpath = &runtimepath\nsource ~/.vimrc" >> $HOME/.config/nvim/init.vim
+if [ ! -f "$HOME/.config/nvim/init.vim" ]; then
+    mkdir -p "$HOME/.config/nvim" && touch "$HOME/.config/nvim/init.vim"
+    printf "set runtimepath^=~/.vim runtimepath+=~/.vim/after\nlet &packpath = &runtimepath\nsource ~/.vimrc" >> "$HOME/.config/nvim/init.vim"
 fi
 
 # install vundle
-echo "looking for vundle";
-if [ ! -d $HOME/.vim/bundle/Vundle.vim ]; then
+echo "looking for vundle"
+if [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
     echo "installing vundle"
-    git clone -q https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim;
+    git clone -q https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
     # go to  ~/dotfiles/.vim.plugins and :PluginInstall
 else
     echo "vundle already installed"
@@ -152,14 +115,14 @@ fi
 #########    GIT    #########
 #############################
 # Create the gitconfig mapping
-if [ ! -z "$(grep "dotfiles/.gitconfig" "$HOME/.gitconfig")" ]; then
+if grep -q "dotfiles/.gitconfig" "$HOME/.gitconfig" 2>/dev/null ; then
     echo "gitconfig already configured"
 else
     echo "adding dotfiles gitconfig to gitconfig path"
-    echo -e "[include]\n\tpath = ~/dotfiles/.gitconfig" >> $HOME/.gitconfig
+    printf "[include]\n\tpath = ~/dotfiles/.gitconfig\n" >> "$HOME/.gitconfig"
 fi
 
-if [ ! -f $HOME/.git-completion.bash ]; then
+if [ ! -f "$HOME/.git-completion.bash" ]; then
     echo "installing git-completion script"
     curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
 else
