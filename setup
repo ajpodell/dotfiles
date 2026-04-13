@@ -2,22 +2,36 @@
 
 # a basic setup script for starting up a new mac
 
+if [[ "$(uname)" != "Darwin" ]] ; then
+    echo "this setup script only supports macOS"
+    exit 1
+fi
+
+if [ -z "$DOTPATH" ] ; then
+    echo "DOTPATH is not set"
+    exit 1
+fi
+
 # TODO: make this optional, since want to have linux or mac compatible
 
 # -- all of this should be mac only --
+# put DOTPATH somewhere
 
 echo "looking for homebrew"
 which -s brew
 if [[ $? != 0  ]] ; then
     echo "installing homebrew";
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    # exit here, because you need to run the commands after installation for setup
+    # dont necessarily script these
+    # echo >> /Users/aaron/.zprofile
+    # echo 'eval "$(/opt/homebrew/bin/brew shellenv zsh)"' >> /Users/aaron/.zprofile
+    # eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+
 else
     echo "updating homebrew"
     brew update
 fi
-
-echo "instaling git-completion script"
-curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
 
 # should check that dotpath is in place - but just do it now
 if [ ! -n "$DOTPATH" ] ; then
@@ -39,10 +53,23 @@ fi
 # create top-level files --- TODO these should be more like an append. and ideally it would take in the appropriate file, since bashrc or bash_profile or .bashrc.user could be used
 # NOTE
 # inputrc is handled by a path variable in the bashrc
+
+#############################
+########     TMUX     #######
+#############################
 if [ ! -f $HOME/.tmux.conf ]; then
     echo "adding .tmux.conf"
     echo "source-file $DOTPATH/.tmux.conf" > $HOME/.tmux.conf
 fi
+
+which tmux
+if [[ $? != 0 ]] ; then
+    echo "tmux not found, installing"
+    brew install tmux
+else
+    echo "tmux already installed"
+fi
+
 #############################
 #########    ZSH    #########
 #############################
@@ -130,6 +157,13 @@ if [ ! -z "$(grep "dotfiles/.gitconfig" "$HOME/.gitconfig")" ]; then
 else
     echo "adding dotfiles gitconfig to gitconfig path"
     echo -e "[include]\n\tpath = ~/dotfiles/.gitconfig" >> $HOME/.gitconfig
+fi
+
+if [ ! -f $HOME/.git-completion.bash ]; then
+    echo "installing git-completion script"
+    curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
+else
+    echo "git-completion script already installed"
 fi
 
 
