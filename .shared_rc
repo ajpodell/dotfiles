@@ -33,6 +33,11 @@ alias rless="less -r"
 ##################################################################
 
 
+# uv
+if command -v uv >/dev/null 2>&1 ; then
+    alias pip="uv pip"
+fi
+
 # random ones
 alias grep='grep --color=auto --binary-file=without-match --exclude-dir=\.pants\.d --exclude="*.snap" --exclude-dir="dist"'
 

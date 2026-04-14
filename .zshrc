@@ -84,15 +84,22 @@ type starship_zle-keymap-select >/dev/null || \
 # eval "$(starship init zsh)"
 
 
+# trying out "uv" starting 2026-04-13. safe to delete if not coming back to pyenv
 # set pyenv and map python to python3
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-# this stops the second print of the virtualenv in its own line above the prompt
-eval "$(pyenv init -)"
-export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-eval "$(pyenv virtualenv-init -)" # If using pyenv-virtualenv
+# export PYENV_ROOT="$HOME/.pyenv"
+# export PATH="$PYENV_ROOT/bin:$PATH"
+# # this stops the second print of the virtualenv in its own line above the prompt
+# eval "$(pyenv init -)"
+# export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+# eval "$(pyenv virtualenv-init -)" # If using pyenv-virtualenv
 # use ipdb in python
 export PYTHONBREAKPOINT=ipdb.set_trace
+
+# always source the bookkeeping venv on shell start
+# may switch to direnv if this becomes problematic
+if [ -f "$HOME/bookkeeping/.venv/bin/activate" ]; then
+    source "$HOME/bookkeeping/.venv/bin/activate"
+fi
 
 # setting up autoenv
 # will need to do a check for this one

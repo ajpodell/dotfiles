@@ -134,6 +134,19 @@ fi
 #############################
 ########    PYTHON    #######
 #############################
+if ! command -v uv >/dev/null ; then
+    read -p "uv not found. install via brew? [y/N] " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]] ; then
+        brew install uv
+    else
+        echo "skipping uv install"
+    fi
+else
+    echo "uv already installed"
+fi
+
+
 # inputrc doesnt work in ipython & ipdb
 # run `ipython profile create`
 # ```
