@@ -54,6 +54,7 @@ brew_install_if_missing starship
 brew_install_if_missing fzf
 brew_install_if_missing fd
 brew_install_if_missing nvim neovim
+brew_install_if_missing gh
 
 #############################
 ########     TMUX     #######
