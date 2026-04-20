@@ -126,6 +126,14 @@ if [[ ! -t 0 ]]; then
   typeset -f cd >/dev/null 2>&1 && unset -f cd
 fi
 
+# openssl can be a pain. claude is usually pretty good, but sometimes you need to export LDFLAGS & CPPFLAGS.
+# this is probably better not checked in since it can move, but the last time i exported it looked like this
+# export LDFLAGS="-L/opt/homebrew/opt/openssl/lib -L/opt/homebrew/opt/libpq/lib"
+# export CPPFLAGS="-I/opt/homebrew/opt/openssl/include -I/opt/homebrew/opt/libpq/include"
+
+
+
+
 # ALTERNATE TO ABOVE
 # --- autoenv setup ---
 # source /path/to/autoenv/activate.sh

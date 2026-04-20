@@ -55,6 +55,7 @@ brew_install_if_missing fzf
 brew_install_if_missing fd
 brew_install_if_missing nvim neovim
 brew_install_if_missing gh
+brew_install_if_missing pyright  # needed for neovim LSP (python go-to-definition, find usages, etc)
 
 #############################
 ########     TMUX     #######

@@ -24,7 +24,7 @@ map <leader>pp :setlocal paste!<cr>
 
 "clear highlighting after search
 noremap <ESC><ESC> :noh<cr><ESC>
-noremap K <nop>
+" K is used by LSP for hover docs (see .vim.plugins lua config)
 noremap C-[ <nop>
 noremap C-] <nop>
 "cnoremap sh bash  "sh !sh bash

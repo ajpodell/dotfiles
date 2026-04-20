@@ -189,16 +189,15 @@ let g:fzf_vim.buffers_jump = 0
 
 """"""" END FZF """"""""""""'"
 
-" better autocomplete and function defs
-Plugin 'davidhalter/jedi-vim'
-let g:jedi#use_tabs_not_buffers = 0
-let g:jedi#popup_on_dot = 0  " maybe if i get more used to it, consider enabling this
-"let g:jedi#usages_command = "<leader>n"  " idk why this isn working
-autocmd FileType python setlocal completeopt-=preview  " dont show the docstring preview
+" Testing move from jedi-vim to pyright LSP (comment back in to revert)
+" Plugin 'davidhalter/jedi-vim'
+" let g:jedi#use_tabs_not_buffers = 0
+" let g:jedi#popup_on_dot = 0  " maybe if i get more used to it, consider enabling this
+" "let g:jedi#usages_command = "<leader>n"  " idk why this isn working
+" autocmd FileType python setlocal completeopt-=preview  " dont show the docstring preview
 
-" TOLOOK AT
-" supertab
-" deoplete-plugins/deoplete-jedi
+" LSP support (replaces jedi-vim)
+Plugin 'neovim/nvim-lspconfig'
 
 
 "git blame and another git fun i havent learned yet
@@ -309,5 +308,32 @@ EOF
 nnoremap <leader>ms :Markview splitToggle<CR>
 nnoremap <leader>mh :Markview HybridToggle<CR>
 nnoremap <leader>mm :Markview<CR>
+
+" ------- PYRIGHT LSP ------- "
+lua << EOF
+-- Neovim 0.12+ native LSP config (no lspconfig wrapper needed)
+vim.lsp.config('pyright', {
+    cmd = { 'pyright-langserver', '--stdio' },
+    filetypes = { 'python' },
+    root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', '.git' },
+})
+vim.lsp.enable('pyright')
+
+-- LSP keybindings (only active in buffers with an LSP attached)
+-- \d and \n match the old jedi-vim defaults for go-to-definition and find usages
+vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(args)
+        local opts = { buffer = args.buf }
+        vim.keymap.set('n', '<Leader>d', vim.lsp.buf.definition, opts)    -- go to definition (jedi-vim default)
+        vim.keymap.set('n', '<Leader>n', vim.lsp.buf.references, opts)    -- find usages (jedi-vim default)
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)          -- go to definition (vim convention)
+        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)          -- find references (vim convention)
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)                -- hover docs
+        vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, opts)      -- rename symbol
+        vim.keymap.set('n', '<Leader>dn', vim.diagnostic.goto_next, opts) -- next diagnostic
+        vim.keymap.set('n', '<Leader>dp', vim.diagnostic.goto_prev, opts) -- prev diagnostic
+    end,
+})
+EOF
 
 " vim: ft=vim
