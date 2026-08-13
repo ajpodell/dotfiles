@@ -130,7 +130,15 @@ fi
 # this is probably better not checked in since it can move, but the last time i exported it looked like this
 # export LDFLAGS="-L/opt/homebrew/opt/openssl/lib -L/opt/homebrew/opt/libpq/lib"
 # export CPPFLAGS="-I/opt/homebrew/opt/openssl/include -I/opt/homebrew/opt/libpq/include"
+# new as of july 13 after upgrade
+export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/opt/libpq/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/libpq/include"
 
+
+# Claude Code
+# someone on reddit thinks this may fix the scrolling behavior with tmux
+# https://www.reddit.com/r/ClaudeCode/comments/1sxmg52/scrolling_inside_tmux_broken_recently/
+CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1
 
 
 
