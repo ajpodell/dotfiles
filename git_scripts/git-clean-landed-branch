@@ -2,50 +2,266 @@
 
 set -euo pipefail
 
-# Resolve the main branch for this repo. Fails if unset.
-# To configure, run:
+# Delete the current branch once its work has provably landed on the main branch.
+#
+# Why this is not just `git branch -d`:
+#
+# This repo squash-merges. A squash rewrites your commits into a new one, so your
+# branch tip is never an ancestor of main and `git branch -d`'s "is it merged?"
+# test can never pass on the merits. When it does pass, it is because the branch
+# and its upstream point at the same commit - git checks the branch against its
+# *upstream* first and only falls back to HEAD when no upstream ref resolves. So
+# the usual clean delete is really just "local == remote", not proof anything
+# landed.
+#
+# This script replaces that accident with a real check: it asks whether merging
+# this branch into main would change main at all. If the answer is no, every line
+# of the branch is already in main and deleting it cannot lose work - which is
+# true for squash merges, rebases and fast-forwards alike. Only then does it use
+# `-D`, deliberately, and print the SHA so the delete is reversible.
+#
+# On success it guarantees one end state: the branch is gone and you are on main,
+# fast-forwarded to origin/main. Anything that would leave you somewhere else -
+# main checked out in another worktree, a local main that has diverged - is
+# refused up front, before the branch is touched, rather than half-applied.
+#
+# Usage:
+#   git clean-landed-branch [--dry-run|-n]
+#
+# Config:
 #   git config project.main-branch <branch>
+
+dry_run=0
+for arg in "$@"; do
+    case "$arg" in
+        -n | --dry-run) dry_run=1 ;;
+        -h | --help)
+            # Print the header comment block, whatever length it happens to be:
+            # every comment line after the shebang/`set`, stopping at the first
+            # line that is not one. A fixed line range silently rots when the
+            # block is edited.
+            awk 'NR>4 && /^#/ { sub(/^# ?/, ""); print; next } NR>4 { exit }' "$0"
+            exit 0
+            ;;
+        *)
+            echo "Error: unknown argument '$arg' (expected --dry-run)." >&2
+            exit 1
+            ;;
+    esac
+done
+
 main_branch=$(git config --get project.main-branch 2>/dev/null) || {
-    echo "Error: project.main-branch is not set for this repo."
-    echo "Run: git config project.main-branch <branch>"
+    echo "Error: project.main-branch is not set for this repo." >&2
+    echo "Run: git config project.main-branch <branch>" >&2
     exit 1
 }
 
-branch=$(git rev-parse --abbrev-ref HEAD)
+branch=$(git symbolic-ref --quiet --short HEAD) || {
+    echo "Error: HEAD is detached, so there is no branch to clean." >&2
+    exit 1
+}
 
 if [ "$branch" = "$main_branch" ]; then
-    echo "Error: already on $main_branch, nothing to clean."
+    echo "Error: already on $main_branch, nothing to clean." >&2
+    exit 1
+fi
+
+# A merge or checkout against a dirty tree either refuses or makes a mess, and
+# uncommitted work is exactly what this script must never destroy.
+if ! git diff --quiet HEAD -- || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+    echo "Error: working tree has uncommitted or untracked changes." >&2
+    echo "Commit, stash, or clean them before cleaning up the branch." >&2
+    exit 1
+fi
+
+branch_sha=$(git rev-parse HEAD)
+
+# Landing on an up-to-date main is part of the contract, so a main that is checked
+# out elsewhere is a hard stop rather than something to work around. Git will not
+# let two worktrees hold the same branch, and updating that branch's ref from here
+# would desync the other worktree's index. Checked before the fetch so the refusal
+# costs nothing and changes nothing.
+main_worktree=$(git worktree list --porcelain | awk -v ref="refs/heads/$main_branch" '
+    /^worktree / { line = $0; sub(/^worktree /, "", line); path = line; next }
+    $0 == "branch " ref { print path; exit }
+')
+if [ -n "$main_worktree" ] && [ "$main_worktree" != "$(git rev-parse --show-toplevel)" ]; then
+    echo "Error: $main_branch is checked out in another worktree:" >&2
+    echo "  $main_worktree" >&2
+    echo "" >&2
+    echo "Nothing was deleted. Either run this from that worktree, or switch it off" >&2
+    echo "$main_branch first. To retire this worktree entirely:" >&2
+    echo "  git worktree remove $(git rev-parse --show-toplevel)" >&2
     exit 1
 fi
 
 echo "Cleaning landed branch: $branch (main: $main_branch)"
 
-# Update main branch and merge into current branch.
-# Delegates to git-update-master-merge which handles the fetch + merge.
-if ! git-update-master-merge; then
-    echo "Error: git-update-master-merge failed (fetch or merge conflict)."
+# One network call. --prune is the important half: when the PR merged, the forge
+# deleted the remote branch, but refs/remotes/origin/<branch> lingers locally
+# until something prunes it - and a stale upstream is what makes `git branch -d`
+# report "not merged to origin/<branch>, even though it is merged to HEAD".
+echo "Fetching origin (with prune)..."
+git fetch --prune --quiet origin
+
+remote_main="origin/$main_branch"
+git rev-parse --verify --quiet "$remote_main" >/dev/null || {
+    echo "Error: $remote_main not found. Is '$main_branch' the right main branch?" >&2
+    exit 1
+}
+
+# The final fast-forward has to be guaranteed before anything is deleted, so prove
+# it here instead of discovering it afterwards with the branch already gone. A
+# local main that is not an ancestor of origin/main carries commits of its own,
+# and silently rewriting or merging those is not this script's call to make.
+# Absent locally is fine - checkout creates it from the remote-tracking branch.
+if git rev-parse --verify --quiet "refs/heads/$main_branch" >/dev/null &&
+    ! git merge-base --is-ancestor "$main_branch" "$remote_main"; then
+    echo "Error: local $main_branch has diverged from $remote_main and cannot" >&2
+    echo "fast-forward, so this would not leave you on an up-to-date $main_branch." >&2
+    echo "Nothing was deleted. Local-only commits:" >&2
+    echo "" >&2
+    git log --oneline "$remote_main..$main_branch" >&2
     exit 1
 fi
 
-# Verify no diff against main (squash merge should contain all changes)
-if ! git diff --quiet "$main_branch"; then
-    echo "Error: branch has differences from $main_branch. Your PR may not be merged yet."
+# Does merging this branch into main change main? Compared as trees, so it holds
+# for squash merges, where the branch's own commits are not in main's history but
+# every line of its content is. Nothing is mutated: no merge, no reset, no
+# checkout - the original version of this script did all three, and the reset in
+# particular is what left the branch ahead of its upstream and broke `-d`.
+contained=0
+merged_tree=""
+if merged_tree=$(git merge-tree --write-tree "$remote_main" "$branch_sha" 2>/dev/null); then
+    [ "$merged_tree" = "$(git rev-parse "$remote_main^{tree}")" ] && contained=1
+else
+    merged_tree=""
+fi
+
+if [ "$contained" -ne 1 ]; then
+    echo "" >&2
+    echo "Error: $branch has content that is not in $remote_main yet." >&2
+    echo "Nothing was deleted. Merging it into $main_branch would still change:" >&2
+    echo "" >&2
+    if [ -n "$merged_tree" ]; then
+        # Exactly what the merge would add. A `$remote_main...HEAD` diff would
+        # instead show everything since the merge base, which after a squash means
+        # listing the files that *did* land alongside the ones that did not.
+        git diff --stat "$remote_main^{tree}" "$merged_tree" >&2
+    else
+        echo "  (branch conflicts with $remote_main - merge it and resolve first)" >&2
+    fi
+    exit 1
+fi
+
+# Content containment already proves the delete is lossless, so the PR state is a
+# second opinion rather than the gate - but an open PR means the branch is still
+# in play (someone may push to it), and that is worth stopping for. A missing PR,
+# or no `gh`, is not evidence of anything either way.
+if command -v gh >/dev/null 2>&1; then
+    pr_state=$(gh pr view "$branch" --json state --jq '.state' 2>/dev/null || true)
+    case "$pr_state" in
+        MERGED | "") ;;
+        CLOSED)
+            echo "Note: PR for $branch is CLOSED, not merged - but its content is in $main_branch."
+            ;;
+        *)
+            echo "Error: PR for $branch is $pr_state, not merged." >&2
+            echo "Its content is already in $main_branch, but the PR is still open." >&2
+            echo "Nothing was deleted. Merge or close the PR first." >&2
+            exit 1
+            ;;
+    esac
+fi
+
+if [ "$dry_run" -eq 1 ]; then
     echo ""
-    git diff --stat "$main_branch"
-    exit 1
+    echo "Dry run: $branch is fully contained in $remote_main and would be deleted."
+    echo "  branch tip:  $branch_sha"
+    echo "  would leave: $main_branch, fast-forwarded to $remote_main"
+    exit 0
 fi
 
-# Align commits with main branch
-echo "Resetting to $main_branch..."
-git reset "$main_branch"
+# Both of these were proven possible above, and `set -e` aborts before the delete
+# if either is somehow wrong - leaving the branch intact rather than stranding you
+# off main with nothing to go back to. Order matters: a branch cannot be deleted
+# while it is checked out, so the move comes first.
+git checkout --quiet "$main_branch"
+git merge --ff-only --quiet "$remote_main"
+echo "Checked out $main_branch, up to date with $remote_main."
 
-# Switch to main and delete the branch
-echo "Checking out $main_branch..."
-git checkout "$main_branch"
+# `-D`, not `-d`, and on purpose: containment above is a stronger check than the
+# one `-d` performs, and under squash merges `-d` would refuse a branch that has
+# demonstrably landed. The tip is printed so this stays reversible.
+git branch -D "$branch" >/dev/null
+echo "Deleted branch $branch."
+echo "  restore with: git branch $branch $branch_sha"
 
-echo "Deleting branch $branch..."
-git branch -d "$branch"
+if [ "$(git rev-parse --git-dir)" != "$(git rev-parse --git-common-dir)" ]; then
+    echo "  this is a linked worktree; remove it with: git worktree remove $(git rev-parse --show-toplevel)"
+fi
 
 echo "Cleaned up $branch successfully."
+
+# ---------------------------------------------------------------------------
+# Original version, kept for reference.
+#
+# Superseded because `git reset "$main_branch"` moved the branch to main's tip,
+# which left it ahead of the still-present refs/remotes/origin/<branch>. `git
+# branch -d` checks a branch against its upstream before HEAD, so it then refused
+# with "not deleting branch ... that is not yet merged to refs/remotes/origin/...,
+# even though it is merged to HEAD" - the reset defeated the HEAD check it was
+# meant to satisfy and tripped the upstream one instead.
+#
+# #!/usr/bin/env bash
+#
+# set -euo pipefail
+#
+# # Resolve the main branch for this repo. Fails if unset.
+# # To configure, run:
+# #   git config project.main-branch <branch>
+# main_branch=$(git config --get project.main-branch 2>/dev/null) || {
+#     echo "Error: project.main-branch is not set for this repo."
+#     echo "Run: git config project.main-branch <branch>"
+#     exit 1
+# }
+#
+# branch=$(git rev-parse --abbrev-ref HEAD)
+#
+# if [ "$branch" = "$main_branch" ]; then
+#     echo "Error: already on $main_branch, nothing to clean."
+#     exit 1
+# fi
+#
+# echo "Cleaning landed branch: $branch (main: $main_branch)"
+#
+# # Update main branch and merge into current branch.
+# # Delegates to git-update-master-merge which handles the fetch + merge.
+# if ! git-update-master-merge; then
+#     echo "Error: git-update-master-merge failed (fetch or merge conflict)."
+#     exit 1
+# fi
+#
+# # Verify no diff against main (squash merge should contain all changes)
+# if ! git diff --quiet "$main_branch"; then
+#     echo "Error: branch has differences from $main_branch. Your PR may not be merged yet."
+#     echo ""
+#     git diff --stat "$main_branch"
+#     exit 1
+# fi
+#
+# # Align commits with main branch
+# echo "Resetting to $main_branch..."
+# git reset "$main_branch"
+#
+# # Switch to main and delete the branch
+# echo "Checking out $main_branch..."
+# git checkout "$main_branch"
+#
+# echo "Deleting branch $branch..."
+# git branch -d "$branch"
+#
+# echo "Cleaned up $branch successfully."
+# ---------------------------------------------------------------------------
 
 # vim: ft=sh
