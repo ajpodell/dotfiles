@@ -29,48 +29,33 @@ Plugin 'gmarik/Vundle.vim'
 
 " adam recs
 " linter
+" ALE - now only used for JS/TS/CSS. Python is handled by pyright + ruff LSP.
+" Old python ALE config (for rollback):
+"   ale_linters python: ['ruff', 'mypy']
+"   ale_fixers python: ['ruff', 'ruff_format']
+"   ale_python_ruff_options='--config="~/bookkeeping/ruff.toml" --unfixable=F401'
+"   ale_python_auto_virtualenv=1
 Plugin 'dense-analysis/ale'
 
 map <leader>ad :ALEDisableBuffer<cr>
 map <leader>ae :ALEEnableBuffer<cr>
-map <leader>an :ALENextWrap<cr>
-map <leader>ap :ALEPreviousWrap<cr>
 nmap <leader>af <Plug>(ale_fix)
-" probably want some form of pylint, but its being annoying right now
+" Diagnostic navigation uses vim.diagnostic (covers both LSP and ALE)
+nnoremap <leader>an <cmd>lua vim.diagnostic.goto_next({ wrap = true })<cr>
+nnoremap <leader>ap <cmd>lua vim.diagnostic.goto_prev({ wrap = true })<cr>
+
 let g:ale_linters = {
 \   'javascript': ['flow', 'eslint', 'prettier', 'tslint'],
 \   'typescriptreact': ['eslint'],
-\   'python': ['ruff', 'mypy']
 \}
-" \   'python': ['ruff', 'isort', 'mypy']
-
-", 'importjs'],
-" \   'python': ['autopep8', 'isort'],
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'python': ['ruff', 'ruff_format'],
 \   'javascript': ['prettier', 'eslint'],
 \   'typescriptreact': ['eslint', 'tslint'],
 \   'css': ['prettier', 'stylelint']
 \}
-
 let g:ale_echo_msg_format = '%linter% says: %s'
-" try to get pylint working with global
-" let g:ale_python_pylint_options = '--rcfile pylintrc'
-" let g:ale_python_pylint_options = '--rcfile ~/data/pylintrc'
-let g:ale_python_auto_virtualenv=1
-" let g:ale_python_pylint_use_global=1
-" idk if i want this yet
-" let g:ale_python_black_options= '--config=/path/to/config'
-
-" because ruff will remove an import after i comment out a usage its more annoying than helpful.
-" it can still get caught at pre-commit, so just disable it for me, rather than at the global ruff.toml
-let g:ale_python_ruff_options='--config="~/bookkeeping/ruff.toml" --unfixable=F401'
-let g:ale_python_ruff_use_global = 1
-" let g:ale_python_ruff_change_directory = 1
-let g:ale_python_ruff_format_change_directory = 1
 let g:ale_fix_on_save = 1
-" let g:ale_python_ruff_executable = 'ruff --show-settings'
 
 " other fixers
 ""'autopep8' - Fix PEP8 issues with autopep8.
@@ -202,6 +187,7 @@ Plugin 'neovim/nvim-lspconfig'
 
 "git blame and another git fun i havent learned yet
 Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-rhubarb'
 " just barely getting started here, but try to start using vim more to deal with git stuff
 nnoremap <Leader>gs :vert G<Cr>
 nnoremap <C-g> :vert G<Cr>
@@ -309,15 +295,77 @@ nnoremap <leader>ms :Markview splitToggle<CR>
 nnoremap <leader>mh :Markview HybridToggle<CR>
 nnoremap <leader>mm :Markview<CR>
 
-" ------- PYRIGHT LSP ------- "
+" ------- PYTHON LSP: pyright (type checking) + ruff (linting & formatting) ------- "
 lua << EOF
 -- Neovim 0.12+ native LSP config (no lspconfig wrapper needed)
+
+-- Auto-detect virtualenv python path so pyright resolves packages correctly.
+-- Checks $VIRTUAL_ENV first, then .venv in project root (common with uv).
+local function detect_python_path(root_dir)
+    local venv = os.getenv('VIRTUAL_ENV')
+    if venv then
+        return venv .. '/bin/python'
+    end
+    if root_dir then
+        local venv_python = root_dir .. '/.venv/bin/python'
+        if vim.fn.executable(venv_python) == 1 then
+            return venv_python
+        end
+    end
+    return nil
+end
+
+-- Pyright: type checking & go-to-definition/references/hover/rename
+-- To disable diagnostics (e.g. if reverting to mypy via ALE), set diagnosticMode = 'off'
 vim.lsp.config('pyright', {
     cmd = { 'pyright-langserver', '--stdio' },
     filetypes = { 'python' },
     root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', '.git' },
+    settings = {
+        python = {
+            analysis = {
+                diagnosticMode = 'openFilesOnly',
+            },
+        },
+    },
+    on_init = function(client)
+        local python_path = detect_python_path(client.root_dir)
+        if python_path then
+            client.settings = vim.tbl_deep_extend('force', client.settings, {
+                python = { pythonPath = python_path },
+            })
+            client:notify('workspace/didChangeConfiguration', {
+                settings = client.settings,
+            })
+        end
+    end,
 })
 vim.lsp.enable('pyright')
+
+-- Ruff LSP: linting diagnostics + formatting (replaces ALE ruff linter/fixer for python)
+-- Uses ruff's built-in language server (ruff server)
+vim.lsp.config('ruff', {
+    cmd = { 'ruff', 'server' },
+    filetypes = { 'python' },
+    root_markers = { 'pyproject.toml', 'ruff.toml', '.ruff.toml', 'setup.py', '.git' },
+    settings = {
+        ruff = {
+            configuration = '~/bookkeeping/ruff.toml',
+            -- Don't auto-remove unused imports (F401) — too aggressive while editing.
+            -- Still caught at pre-commit.
+            lint = {
+                extendFixableRules = {},
+                extendUnfixableRules = { 'F401' },
+            },
+        },
+    },
+})
+vim.lsp.enable('ruff')
+
+-- Workaround: pyright publishes stale diagnostics during initial workspace
+-- indexing that it won't reproduce after a buffer reload. This automates the
+-- manual :e fix — once per buffer, after a delay for indexing to finish.
+local pyright_refreshed_bufs = {}
 
 -- LSP keybindings (only active in buffers with an LSP attached)
 -- \d and \n match the old jedi-vim defaults for go-to-definition and find usages
@@ -332,6 +380,38 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, opts)      -- rename symbol
         vim.keymap.set('n', '<Leader>dn', vim.diagnostic.goto_next, opts) -- next diagnostic
         vim.keymap.set('n', '<Leader>dp', vim.diagnostic.goto_prev, opts) -- prev diagnostic
+
+        -- Deferred re-sync for pyright stale diagnostics (once per buffer)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client and client.name == 'pyright' then
+            local buf = args.buf
+            if not pyright_refreshed_bufs[buf] then
+                pyright_refreshed_bufs[buf] = true
+                vim.defer_fn(function()
+                    if vim.api.nvim_buf_is_valid(buf)
+                       and not vim.bo[buf].modified then
+                        vim.api.nvim_buf_call(buf, function()
+                            local view = vim.fn.winsaveview()
+                            vim.cmd('silent! edit')
+                            vim.fn.winrestview(view)
+                        end)
+                    end
+                end, 3000)
+            end
+            vim.api.nvim_create_autocmd('BufDelete', {
+                buffer = buf,
+                once = true,
+                callback = function() pyright_refreshed_bufs[buf] = nil end,
+            })
+        end
+    end,
+})
+
+-- Format python files on save using ruff LSP (replaces ALE's ale_fix_on_save for python)
+vim.api.nvim_create_autocmd('BufWritePre', {
+    pattern = '*.py',
+    callback = function()
+        vim.lsp.buf.format({ name = 'ruff', async = false })
     end,
 })
 EOF
